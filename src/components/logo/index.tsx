@@ -20,5 +20,16 @@ export function Logo({ variant = "small", style, ...props }: LogoProps) {
       </View>
     );
   }
-  return <View style={[styles.smallContainer, style]} {...props}></View>;
+  return (
+    <View style={[styles.smallContainer, style]} {...props}>
+      <Image
+        source={require("@/assets/images/logo.png")}
+        style={styles.smallLogo}
+      />
+      <Image
+        source={require("@/assets/images/effycity.png")}
+        style={styles.smallEffycity}
+      />
+    </View>
+  );
 }

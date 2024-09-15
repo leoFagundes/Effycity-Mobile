@@ -37,7 +37,7 @@ export function Home() {
             Fazer login com o Google
           </Button>
           <Button
-            onPress={() => console.log("Press")}
+            onPress={() => router.push("/public")}
             icon={<Ionicons name="bar-chart-outline" size={24} />}
           >
             Como está minha cidade?

@@ -1,4 +1,5 @@
 # Effycity-Mobile
 
-eas loginq
+eas login
+
 eas build --plataform android

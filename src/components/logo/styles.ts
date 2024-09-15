@@ -17,5 +17,22 @@ export const styles = StyleSheet.create({
     resizeMode: "contain",
   },
 
-  smallContainer: {},
+  smallContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    width: "100%",
+  },
+
+  smallLogo: {
+    height: 48,
+    width: 48,
+  },
+
+  smallEffycity: {
+    width: 130,
+    height: 40,
+    resizeMode: "contain",
+  },
 });
