@@ -3,39 +3,26 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
+    paddingHorizontal: 40,
+    paddingVertical: 32,
     flex: 1,
     backgroundColor: theme.colors.backgroundPrimary,
   },
 
-  toogleForm: {
+  header: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 20,
-    paddingVertical: 32,
-  },
-
-  toogleCard: {
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: theme.colors.primaryColor,
-    width: 100,
-    height: 90,
-    borderRadius: 8,
-    gap: 6,
   },
 
-  toogleText: {
+  title: {
     color: theme.colors.fontColor,
-    fontFamily: theme.fontFamily.medium,
+    fontSize: 16,
+    fontFamily: theme.fontFamily.semiBold,
   },
 
   isInvisible: {
     display: "none",
-  },
-
-  isActive: {
-    borderWidth: 2,
-    borderColor: theme.colors.fontColor,
   },
 
   formContent: {
@@ -43,10 +30,5 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     gap: 16,
-  },
-
-  buttonsContent: {
-    alignItems: "center",
-    marginBottom: 32,
   },
 });

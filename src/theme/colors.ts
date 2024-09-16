@@ -14,4 +14,6 @@ export const colors = {
   gray_300: "#8D8D99",
   gray_400: "#7C7C8A",
   gray_800: "#161616",
+
+  activityColor: "rgba(213, 229, 242, 0.1)",
 };

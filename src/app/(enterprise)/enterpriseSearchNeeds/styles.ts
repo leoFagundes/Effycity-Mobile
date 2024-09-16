@@ -20,4 +20,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: theme.fontFamily.semiBold,
   },
+  isInvisible: {
+    display: "none",
+  },
 });

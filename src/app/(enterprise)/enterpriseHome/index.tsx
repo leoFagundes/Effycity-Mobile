@@ -1,10 +1,25 @@
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { styles } from "./styles";
+import Feather from "@expo/vector-icons/Feather";
+import { theme } from "@/theme";
+import { TouchableOpacity } from "react-native";
 
 export default function EnterpriseHome() {
   return (
     <View style={styles.container}>
-      <Text>Enterprise AAAAAAAAAAAAAAAAAAAAAA</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Meus Projetos</Text>
+        <TouchableOpacity
+          onPress={() => console.log("Add")}
+          activeOpacity={0.7}
+        >
+          <Feather
+            name="plus-square"
+            size={24}
+            color={theme.colors.fontColor}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
