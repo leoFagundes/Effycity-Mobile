@@ -36,6 +36,7 @@ export default function Login() {
     phone: "",
     area: "",
   });
+
   const router = useRouter();
 
   function handleSubmit() {

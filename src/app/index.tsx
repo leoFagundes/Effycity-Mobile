@@ -8,6 +8,7 @@ import {
   Saira_700Bold,
 } from "@expo-google-fonts/saira";
 import { Loading } from "@/components/loading";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -22,13 +23,13 @@ export default function App() {
   }
 
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar
         barStyle={"light-content"}
         backgroundColor="transparent"
         translucent
       />
       <Home />
-    </>
+    </GestureHandlerRootView>
   );
 }
