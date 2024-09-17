@@ -19,6 +19,7 @@ export const styles = StyleSheet.create({
     color: theme.colors.fontColor,
     fontSize: 16,
     fontFamily: theme.fontFamily.semiBold,
+    marginBottom: 12,
   },
 
   isInvisible: {
@@ -30,5 +31,12 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     gap: 16,
+    marginVertical: 12,
+  },
+
+  buttonContent: {
+    alignItems: "center",
+    gap: 8,
+    marginTop: 12,
   },
 });

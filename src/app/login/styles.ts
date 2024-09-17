@@ -48,5 +48,6 @@ export const styles = StyleSheet.create({
   buttonsContent: {
     alignItems: "center",
     marginBottom: 32,
+    marginTop: 12,
   },
 });
