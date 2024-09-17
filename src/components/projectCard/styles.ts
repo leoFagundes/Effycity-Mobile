@@ -1,5 +1,38 @@
+import { theme } from "@/theme";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    backgroundColor: theme.colors.fontColor,
+    borderRadius: 6,
+    padding: 12,
+  },
+
+  infoContent: {
+    flex: 1,
+    gap: 6,
+  },
+
+  title: {
+    fontSize: 18,
+    fontFamily: theme.fontFamily.semiBold,
+    color: theme.colors.primaryColor,
+  },
+
+  description: {
+    fontSize: 14,
+    fontFamily: theme.fontFamily.medium,
+    color: theme.colors.primaryColor,
+  },
+
+  image: {
+    height: 72,
+    width: 72,
+    backgroundColor: theme.colors.backgroundSecondary,
+    borderRadius: 6,
+  },
 });

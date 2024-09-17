@@ -7,7 +7,7 @@ export function Loading() {
     <ActivityIndicator
       style={styles.loading}
       color={theme.colors.backgroundPrimary}
-      size={"large"}
+      size={"small"}
     />
   );
 }
