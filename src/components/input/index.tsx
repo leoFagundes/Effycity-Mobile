@@ -30,7 +30,17 @@ function Input({ children, style, variant = "primary" }: InputProps) {
 }
 
 function Field({ variant = "primary", ...rest }: FieldProps) {
-  return <TextInput style={[styles.input, variants.text[variant]]} {...rest} />;
+  return (
+    <TextInput
+      selectionColor={
+        variant === "primary"
+          ? theme.colors.fontColor
+          : theme.colors.primaryColor
+      }
+      style={[styles.input, variants.text[variant]]}
+      {...rest}
+    />
+  );
 }
 
 Input.Field = Field;

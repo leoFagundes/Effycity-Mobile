@@ -35,20 +35,19 @@ export const styles = StyleSheet.create({
 
   createBottomSheetContent: {
     alignItems: "center",
-    padding: 28,
+    padding: 16,
   },
 
   titleCreateBottomSheet: {
     fontSize: 26,
     fontFamily: theme.fontFamily.semiBold,
     color: theme.colors.primaryColor,
-    marginVertical: 6,
     textAlign: "center",
   },
 
   formCreateContent: {
     flex: 1,
-    marginVertical: 6,
+    gap: 8,
   },
 
   buttonsContentCreateBottomSheet: {
