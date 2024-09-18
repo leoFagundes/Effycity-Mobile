@@ -29,6 +29,8 @@ export const styles = StyleSheet.create({
 
   bottomSheet: {
     backgroundColor: theme.colors.fontColor,
+    borderTopWidth: 2,
+    borderTopColor: theme.colors.backgroundPrimary,
   },
 
   createBottomSheetContent: {
@@ -36,11 +38,12 @@ export const styles = StyleSheet.create({
     padding: 28,
   },
 
-  titleCreateProject: {
-    fontSize: 22,
+  titleCreateBottomSheet: {
+    fontSize: 26,
     fontFamily: theme.fontFamily.semiBold,
     color: theme.colors.primaryColor,
     marginVertical: 6,
+    textAlign: "center",
   },
 
   formCreateContent: {
@@ -48,12 +51,12 @@ export const styles = StyleSheet.create({
     marginVertical: 6,
   },
 
-  isInvisible: {
-    display: "none",
-  },
-
   buttonsContentCreateBottomSheet: {
     alignItems: "center",
     marginVertical: 6,
+  },
+
+  isInvisible: {
+    display: "none",
   },
 });

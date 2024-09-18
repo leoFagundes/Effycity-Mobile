@@ -1,4 +1,5 @@
 export interface ManagerProps {
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -9,6 +10,7 @@ export interface ManagerProps {
 }
 
 export interface EnterpriseProps {
+  id: string;
   username: string;
   enterpriseName: string;
   email: string;
@@ -18,6 +20,7 @@ export interface EnterpriseProps {
 }
 
 export interface ManagerNeedProps {
+  id: string;
   name: string;
   description: string;
   budget: number;
@@ -27,6 +30,7 @@ export interface ManagerNeedProps {
 }
 
 export interface EnterpriseProjectProps {
+  id: string;
   name: string;
   description: string;
   budget: number;

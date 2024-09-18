@@ -1,17 +1,21 @@
-import { Text, View } from "react-native";
+import { Text, View, ViewProps } from "react-native";
 import { styles } from "./styles";
 import { EnterpriseProjectProps } from "@/types/types";
 
-interface ProjectCardProps {
+interface ProjectCardProps extends ViewProps {
   project: EnterpriseProjectProps;
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+export function ProjectCard({ project, style, ...props }: ProjectCardProps) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]} {...props}>
       <View style={styles.infoContent}>
-        <Text style={styles.title}>{project.name}</Text>
-        <Text style={styles.description}>{project.description}</Text>
+        <Text numberOfLines={2} style={styles.title}>
+          {project.name}
+        </Text>
+        <Text numberOfLines={2} style={styles.description}>
+          {project.description}
+        </Text>
       </View>
       <View style={styles.image} />
     </View>
