@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#052941"
       },
-      "package": "com.projetointegrador.effycity"
+      "package": "com.leofagundes.effycity"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -2,4 +2,4 @@
 
 eas login
 
-eas build --plataform android
+eas build --platform android
