@@ -143,7 +143,7 @@ export default function ManagerNeed() {
       <BottomSheet
         onChange={handleCreateBottomSheetChange}
         ref={createBottomSheetRef}
-        snapPoints={[0.01, 400]}
+        snapPoints={[0.01, 450]}
         backgroundStyle={styles.bottomSheet}
       >
         <Text style={styles.titleCreateBottomSheet}>Criar Necessidade</Text>
@@ -282,7 +282,7 @@ export default function ManagerNeed() {
       <BottomSheet
         onChange={handleEditBottomSheetChange}
         ref={editBottomSheetRef}
-        snapPoints={[0.01, 400]}
+        snapPoints={[0.01, 450]}
         backgroundStyle={styles.bottomSheet}
       >
         {currentNeedOpen && (

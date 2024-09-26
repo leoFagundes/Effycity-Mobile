@@ -156,7 +156,7 @@ export default function EnterpriseHome() {
       <BottomSheet
         onChange={handleCreateBottomSheetChange}
         ref={createBottomSheetRef}
-        snapPoints={[0.01, 400]}
+        snapPoints={[0.01, 450]}
         backgroundStyle={styles.bottomSheet}
       >
         <Text style={styles.titleCreateBottomSheet}>Cria Projeto</Text>
@@ -302,7 +302,7 @@ export default function EnterpriseHome() {
       <BottomSheet
         onChange={handleEditBottomSheetChange}
         ref={editBottomSheetRef}
-        snapPoints={[0.01, 400]}
+        snapPoints={[0.01, 450]}
         backgroundStyle={styles.bottomSheet}
       >
         {currentProjectOpen && (

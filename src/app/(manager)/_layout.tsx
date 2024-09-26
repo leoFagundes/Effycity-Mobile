@@ -2,7 +2,7 @@ import { Tabs } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import Octicons from "@expo/vector-icons/Octicons";
 import { theme } from "@/theme";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { Logo } from "@/components/logo";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -16,10 +16,13 @@ export default function Layout() {
 
         <Tabs
           screenOptions={{
-            tabBarActiveBackgroundColor: theme.colors.activityColor,
             tabBarShowLabel: false,
             tabBarStyle: {
-              backgroundColor: theme.colors.backgroundPrimary, // Troca pela cor desejada
+              backgroundColor: theme.colors.backgroundSecondary,
+              height: 68,
+              borderRadius: 200,
+              margin: 12,
+              borderTopWidth: 0,
             },
           }}
         >
@@ -31,11 +34,34 @@ export default function Layout() {
               tabBarIcon: ({ focused, color, size }) => {
                 if (focused) {
                   return (
-                    <Feather
-                      name="home"
-                      size={size}
-                      color={theme.colors.fontColor}
-                    />
+                    <View
+                      style={{
+                        backgroundColor: theme.colors.activityColor,
+                        alignItems: "center",
+                        width: "100%",
+                        height: "100%",
+                        borderTopLeftRadius: 200,
+                        borderBottomLeftRadius: 200,
+                        padding: 10,
+                        gap: 4,
+                      }}
+                    >
+                      <Feather
+                        name="home"
+                        size={size}
+                        color={theme.colors.fontColor}
+                      />
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          color: theme.colors.fontColor,
+                          fontFamily: theme.fontFamily.semiBold,
+                          fontSize: 14,
+                        }}
+                      >
+                        Necessidades
+                      </Text>
+                    </View>
                   );
                 }
 
@@ -57,11 +83,32 @@ export default function Layout() {
               tabBarIcon: ({ focused, color, size }) => {
                 if (focused) {
                   return (
-                    <Feather
-                      name="pie-chart"
-                      size={size}
-                      color={theme.colors.fontColor}
-                    />
+                    <View
+                      style={{
+                        backgroundColor: theme.colors.activityColor,
+                        alignItems: "center",
+                        width: "100%",
+                        height: "100%",
+                        padding: 10,
+                        gap: 4,
+                      }}
+                    >
+                      <Feather
+                        name="pie-chart"
+                        size={size}
+                        color={theme.colors.fontColor}
+                      />
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          color: theme.colors.fontColor,
+                          fontFamily: theme.fontFamily.semiBold,
+                          fontSize: 14,
+                        }}
+                      >
+                        Gráficos
+                      </Text>
+                    </View>
                   );
                 }
 
@@ -83,11 +130,32 @@ export default function Layout() {
               tabBarIcon: ({ focused, color, size }) => {
                 if (focused) {
                   return (
-                    <Feather
-                      name="layers"
-                      size={size}
-                      color={theme.colors.fontColor}
-                    />
+                    <View
+                      style={{
+                        backgroundColor: theme.colors.activityColor,
+                        alignItems: "center",
+                        width: "100%",
+                        height: "100%",
+                        padding: 10,
+                        gap: 4,
+                      }}
+                    >
+                      <Feather
+                        name="layers"
+                        size={size}
+                        color={theme.colors.fontColor}
+                      />
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          color: theme.colors.fontColor,
+                          fontFamily: theme.fontFamily.semiBold,
+                          fontSize: 14,
+                        }}
+                      >
+                        Projetos
+                      </Text>
+                    </View>
                   );
                 }
 
@@ -109,11 +177,34 @@ export default function Layout() {
               tabBarIcon: ({ focused, color, size }) => {
                 if (focused) {
                   return (
-                    <Octicons
-                      name="gear"
-                      size={size}
-                      color={theme.colors.fontColor}
-                    />
+                    <View
+                      style={{
+                        backgroundColor: theme.colors.activityColor,
+                        alignItems: "center",
+                        width: "100%",
+                        height: "100%",
+                        borderTopRightRadius: 200,
+                        borderBottomRightRadius: 200,
+                        padding: 10,
+                        gap: 4,
+                      }}
+                    >
+                      <Octicons
+                        name="gear"
+                        size={size}
+                        color={theme.colors.fontColor}
+                      />
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          color: theme.colors.fontColor,
+                          fontFamily: theme.fontFamily.semiBold,
+                          fontSize: 14,
+                        }}
+                      >
+                        Configuração
+                      </Text>
+                    </View>
                   );
                 }
 

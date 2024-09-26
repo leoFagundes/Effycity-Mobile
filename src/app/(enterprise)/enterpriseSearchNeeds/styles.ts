@@ -20,7 +20,14 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: theme.fontFamily.semiBold,
   },
+
   isInvisible: {
     display: "none",
+  },
+
+  projectsContent: {
+    flex: 1,
+    gap: 16,
+    marginVertical: 16,
   },
 });
