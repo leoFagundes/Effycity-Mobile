@@ -6,6 +6,7 @@ import { theme } from "@/theme";
 import { Input } from "@/components/input";
 import { useState } from "react";
 import { Button } from "@/components/button";
+import { WebView } from "react-native-webview";
 
 export default function Public() {
   const [location, setLocation] = useState({
@@ -75,6 +76,12 @@ export default function Public() {
           Pesquisar
         </Button>
       </View>
+      <WebView
+        source={{
+          uri: "https://app.powerbi.com/view?r=eyJrIjoiNDc4NmIyYjItNjliNS00OTU2LTllZWItZDliNzkxNGQ1Y2I1IiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9&pageName=33d7a4d0c54a419b8a10",
+        }}
+        style={styles.bi}
+      />
     </View>
   );
 }

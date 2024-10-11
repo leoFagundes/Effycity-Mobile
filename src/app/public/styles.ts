@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.backgroundPrimary,
+    paddingHorizontal: 32,
   },
 
   formContent: {
@@ -15,5 +16,9 @@ export const styles = StyleSheet.create({
 
   isInvisible: {
     display: "none",
+  },
+
+  bi: {
+    marginVertical: 20,
   },
 });
