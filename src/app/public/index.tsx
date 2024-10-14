@@ -20,8 +20,8 @@ export default function Public() {
 
   return (
     <View style={styles.container}>
-      <Logo variant="small" style={{ marginVertical: 32 }} />
-      <View style={styles.formContent}>
+      {/* <Logo variant="small" style={{ marginVertical: 32 }} /> */}
+      {/* <View style={styles.formContent}>
         <Input variant="secondary">
           <Feather
             name="map-pin"
@@ -75,10 +75,10 @@ export default function Public() {
         <Button variant="secondary" onPress={handleSearch}>
           Pesquisar
         </Button>
-      </View>
+      </View> */}
       <WebView
         source={{
-          uri: "https://app.powerbi.com/view?r=eyJrIjoiNDc4NmIyYjItNjliNS00OTU2LTllZWItZDliNzkxNGQ1Y2I1IiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9&pageName=33d7a4d0c54a419b8a10",
+          uri: "https://app.powerbi.com/view?r=eyJrIjoiNDc4NmIyYjItNjliNS00OTU2LTllZWItZDliNzkxNGQ1Y2I1IiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9&pageName=216a56ebd2f1798aea5a",
         }}
         style={styles.bi}
       />
