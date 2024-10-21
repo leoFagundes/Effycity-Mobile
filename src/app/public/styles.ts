@@ -11,11 +11,16 @@ export const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     gap: 16,
+    marginVertical: 16,
   },
 
   isInvisible: {
     display: "none",
   },
 
-  bi: {},
+  dashboard: {
+    flex: 1,
+    margin: 16,
+    borderRadius: 8,
+  },
 });

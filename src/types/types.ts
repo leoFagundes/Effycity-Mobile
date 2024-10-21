@@ -1,40 +1,60 @@
-export interface ManagerProps {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  uf: string;
-  city: string;
-  position: string;
-  organization: string;
+export interface Estado {
+  id: number;
+  sgEstado: string;
+  noEstado: string;
 }
 
-export interface EnterpriseProps {
-  id: string;
-  username: string;
-  enterpriseName: string;
+export interface Municipio {
+  id: number;
+  noMunicipio: string;
+  estado: Estado;
+}
+
+export interface UsuarioGestor {
+  id: number;
+  usuario: string;
   email: string;
+  cargo: string;
+  orgao: string;
+  telefone: string;
+  municipio: Partial<Municipio>;
+  estado: Partial<Estado>;
+}
+
+export interface UsuarioEmpresa {
+  id: number;
+  usuario: string;
+  dsEmail: string;
+  empresa: string;
   cnpj: string;
-  phone: string;
-  area: string;
+  telefone: string;
+  areaAtuacao: string;
 }
 
-export interface ManagerNeedProps {
-  id: string;
-  name: string;
-  description: string;
-  budget: number;
-  creationDate: Date;
-  city: string;
-  uf: string;
+export interface Projeto {
+  id: number;
+  usuarioEmpresa: UsuarioEmpresa;
+  noProjeto: string;
+  dsProjeto: string;
+  custo: number;
+  dtCriacao: Date;
+  duracaoMeses: number;
+  areaTematica: AreaTematica;
 }
 
-export interface EnterpriseProjectProps {
-  id: string;
-  name: string;
-  description: string;
-  budget: number;
-  creationDate: Date;
-  duration: number;
-  category: string;
+export interface Necessidade {
+  id: number;
+  noNecessidade: string;
+  dsNecessidade: string;
+  nuCusto: number;
+  dtCriacao: Date;
+  usuarioGestor: UsuarioGestor;
+  estado: Estado;
+  municipio: Municipio;
+  areaTematica: AreaTematica;
+}
+
+export interface AreaTematica {
+  id: number;
+  dsAreaTematica: string;
 }

@@ -7,81 +7,54 @@ import { Input } from "@/components/input";
 import { useState } from "react";
 import { Button } from "@/components/button";
 import { WebView } from "react-native-webview";
+import SelectDropDown from "@/components/selectDropDown";
 
 export default function Public() {
-  const [location, setLocation] = useState({
-    uf: "",
-    city: "",
-  });
-
-  function handleSearch() {
-    console.log("Pesquisar...");
-  }
+  const [currentIndicator, setCurrentIndicator] = useState("");
 
   return (
     <View style={styles.container}>
-      {/* <Logo variant="small" style={{ marginVertical: 32 }} /> */}
-      {/* <View style={styles.formContent}>
-        <Input variant="secondary">
-          <Feather
-            name="map-pin"
-            size={16}
-            color={theme.colors.backgroundPrimary}
-          />
-          <Input.Field
-            variant="secondary"
-            value={location.uf}
-            placeholder="UF"
-            placeholderTextColor={theme.colors.gray_400}
-            onChangeText={(e) => setLocation({ ...location, uf: e })}
-          />
-          <TouchableOpacity
-            style={!location.uf && styles.isInvisible}
-            onPress={() => setLocation({ ...location, uf: "" })}
-            activeOpacity={0.7}
-          >
-            <Feather
-              name="x"
-              size={16}
-              color={theme.colors.backgroundPrimary}
-            />
-          </TouchableOpacity>
-        </Input>
-        <Input variant="secondary">
-          <Feather
-            name="map"
-            size={16}
-            color={theme.colors.backgroundPrimary}
-          />
-          <Input.Field
-            variant="secondary"
-            value={location.city}
-            placeholder="Município"
-            placeholderTextColor={theme.colors.gray_400}
-            onChangeText={(e) => setLocation({ ...location, city: e })}
-          />
-          <TouchableOpacity
-            style={!location.city && styles.isInvisible}
-            onPress={() => setLocation({ ...location, city: "" })}
-            activeOpacity={0.7}
-          >
-            <Feather
-              name="x"
-              size={16}
-              color={theme.colors.backgroundPrimary}
-            />
-          </TouchableOpacity>
-        </Input>
-        <Button variant="secondary" onPress={handleSearch}>
-          Pesquisar
-        </Button>
-      </View> */}
-      <WebView
-        source={{
-          uri: "https://app.powerbi.com/view?r=eyJrIjoiNDc4NmIyYjItNjliNS00OTU2LTllZWItZDliNzkxNGQ1Y2I1IiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9&pageName=216a56ebd2f1798aea5a",
-        }}
-        style={styles.bi}
-      />
+      <View style={styles.formContent}>
+        <SelectDropDown
+          placeholder="Escolha um indicador"
+          data={[
+            {
+              title: "Escolas - Ensino básico",
+              link: "https://app.powerbi.com/view?r=eyJrIjoiMjI4MGZhMTYtYTY4OS00ZTBhLTkwYTctOGU0ZTRkMDMwN2Y0IiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9",
+            },
+            {
+              title: "Museus",
+              link: "https://app.powerbi.com/view?r=eyJrIjoiOTY5NjE0Y2YtNWFiNS00NGZjLTlmYjYtMGJmNzhjNzgxNzU1IiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9",
+            },
+            {
+              title: "Saúde",
+              link: "https://app.powerbi.com/view?r=eyJrIjoiNDljNzU1NzAtZmI5OS00YjlkLWFjMTAtZTMzZWZlZTkwOTBiIiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9",
+            },
+            {
+              title: "Projeção internacional",
+              link: "https://app.powerbi.com/view?r=eyJrIjoiNzgyM2RmOGItMTJjYS00ZGY2LWJmODItNjMyNDBkMjYzMTIwIiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9",
+            },
+            {
+              title: "Trânsito",
+              link: "https://app.powerbi.com/view?r=eyJrIjoiMWY5OWI2NDQtYWQ5YS00ZDJhLWEzOWEtODZmZDI1NTAwMDM3IiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9&pageName=216a56ebd2f1798aea5a",
+            },
+          ]}
+          fieldInData="title"
+          onSelected={(selectedItem) => setCurrentIndicator(selectedItem.link)}
+        />
+      </View>
+
+      {currentIndicator ? (
+        <WebView
+          style={styles.dashboard}
+          originWhitelist={["*"]}
+          source={{
+            html: `<iframe allowtransparency="true" title="dashboards_00" width="100%" height="100%" src="${currentIndicator}" frameborder="0"  allowFullScreen="true"></iframe>`,
+          }}
+        />
+      ) : (
+        <Logo style={{ flex: 1 }} variant="large" />
+      )}
     </View>
   );
 }

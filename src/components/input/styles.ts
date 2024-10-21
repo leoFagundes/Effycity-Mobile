@@ -7,8 +7,10 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
     padding: 12,
+    height: 50,
     width: 280,
     borderRadius: 6,
+    position: "relative",
   },
   input: {
     flex: 1,

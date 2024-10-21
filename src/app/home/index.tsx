@@ -5,9 +5,26 @@ import { Logo } from "@/components/logo";
 import { Button } from "@/components/button";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import ManagerUserRepository from "@/services/repositories/managerUserRepository";
+import { Loading } from "@/components/loading";
 
 export function Home() {
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
+
+  async function onGoogleSubmit() {
+    setLoading(true);
+    try {
+      // const fetchedUsers = await ManagerUserRepository.getAll();
+      router.push("/login");
+    } catch (error) {
+      console.error("Erro ao carregar usuários: ", error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -21,7 +38,7 @@ export function Home() {
 
         <View style={styles.buttonsContent}>
           <Button
-            onPress={() => router.push("/login")}
+            onPress={onGoogleSubmit}
             icon={
               <View
                 style={{
@@ -30,7 +47,11 @@ export function Home() {
                   alignItems: "center",
                 }}
               >
-                <Image source={require("@/assets/images/google.png")} />
+                {loading ? (
+                  <Loading />
+                ) : (
+                  <Image source={require("@/assets/images/google.png")} />
+                )}
               </View>
             }
           >
@@ -43,6 +64,8 @@ export function Home() {
             Como está minha cidade?
           </Button>
         </View>
+        <Button onPress={() => router.push("/managerHome")}>man</Button>
+        <Button onPress={() => router.push("/enterpriseHome")}>ent</Button>
       </ImageBackground>
     </View>
   );
