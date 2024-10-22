@@ -1,11 +1,10 @@
-import { UsuarioGestor } from "@/types/types";
 import { api } from "../api";
 
 class LocalRepository {
   static async getMunicipiosById(id: string) {
     try {
       const response = await api.get(`/api/local/municipios/${id}`);
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Erro ao localizar usuário gestor:", error);
@@ -35,7 +34,7 @@ class LocalRepository {
       const response = await api.get(
         `/api/local/municipios?${params.toString()}`
       );
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Erro ao localizar municipios:", error);
@@ -48,7 +47,7 @@ class LocalRepository {
       const response = await api.get(
         `/api/local/municipios/list?estadoId=${estadoId}`
       );
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Erro ao localizar municipios:", error);
@@ -59,7 +58,7 @@ class LocalRepository {
   static async getAllEstados() {
     try {
       const response = await api.get("/api/local/estados");
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Erro ao localizar estados:", error);

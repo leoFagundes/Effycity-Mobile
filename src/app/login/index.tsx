@@ -14,7 +14,7 @@ import { theme } from "@/theme";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/button";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Loading } from "@/components/loading";
 import ManagerUserRepository from "@/services/repositories/managerUserRepository";
 import SelectDropdown from "react-native-select-dropdown";
@@ -60,6 +60,8 @@ export default function Login() {
   });
 
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const { email } = params;
 
   useEffect(() => {
     async function fetchCities() {
@@ -75,6 +77,11 @@ export default function Login() {
     }
 
     fetchCities();
+
+    if (email) {
+      setManager({ ...manager, email: email as string });
+      setEnterprise({ ...enterprise, dsEmail: email as string });
+    }
   }, []);
 
   useEffect(() => {
@@ -255,7 +262,7 @@ export default function Login() {
                 <Feather name="x" size={16} color={theme.colors.fontColor} />
               </TouchableOpacity>
             </Input>
-            <Input>
+            <Input style={email ? { opacity: 0.5, pointerEvents: "none" } : {}}>
               <Feather name="mail" size={20} color={theme.colors.fontColor} />
               <Input.Field
                 value={enterprise.dsEmail}
@@ -367,7 +374,7 @@ export default function Login() {
                 <Feather name="x" size={16} color={theme.colors.fontColor} />
               </TouchableOpacity>
             </Input>
-            <Input>
+            <Input style={email ? { opacity: 0.5, pointerEvents: "none" } : {}}>
               <Feather name="mail" size={20} color={theme.colors.fontColor} />
               <Input.Field
                 value={manager.email}

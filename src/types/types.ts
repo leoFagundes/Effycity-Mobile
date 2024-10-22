@@ -58,3 +58,13 @@ export interface AreaTematica {
   id: number;
   dsAreaTematica: string;
 }
+
+export interface UserInfo {
+  id: string;
+  email: string;
+  verified_email: true;
+  name: string;
+  given_name: string;
+  picture: string;
+  locale: string;
+}
