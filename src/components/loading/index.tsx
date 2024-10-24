@@ -2,11 +2,11 @@ import { ActivityIndicator } from "react-native";
 import { styles } from "./styles";
 import { theme } from "@/theme";
 
-export function Loading() {
+export function Loading({ dark = false }) {
   return (
     <ActivityIndicator
       style={styles.loading}
-      color={theme.colors.backgroundPrimary}
+      color={dark ? theme.colors.fontColor : theme.colors.backgroundPrimary}
       size={"small"}
     />
   );

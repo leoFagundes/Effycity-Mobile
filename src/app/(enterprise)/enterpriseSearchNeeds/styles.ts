@@ -9,6 +9,11 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.colors.backgroundPrimary,
   },
 
+  loadingView: {
+    flex: 1,
+    backgroundColor: theme.colors.backgroundPrimary,
+  },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",

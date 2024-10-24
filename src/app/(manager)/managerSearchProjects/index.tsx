@@ -33,9 +33,15 @@ export default function ManagerConfigs() {
     project.noProjeto.toLowerCase().includes(search.toLowerCase())
   );
 
+  if (loading)
+    return (
+      <View style={styles.loadingView}>
+        <Loading dark />
+      </View>
+    );
+
   return (
     <View style={styles.container}>
-      {loading && <Loading />}
       <View style={styles.header}>
         <Input variant="secondary">
           <Feather

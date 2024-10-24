@@ -1,9 +1,9 @@
 import { Text, View, ViewProps } from "react-native";
 import { styles } from "./styles";
-import { EnterpriseProjectProps, ManagerNeedProps } from "@/types/types";
+import { Necessidade } from "@/types/types";
 
 interface ManagerCardProps extends ViewProps {
-  need: ManagerNeedProps;
+  need: Necessidade;
 }
 
 export function NeedCard({ need, style, ...props }: ManagerCardProps) {
@@ -11,10 +11,10 @@ export function NeedCard({ need, style, ...props }: ManagerCardProps) {
     <View style={[styles.container, style]} {...props}>
       <View style={styles.infoContent}>
         <Text numberOfLines={2} style={styles.title}>
-          {need.name}
+          {need.noNecessidade}
         </Text>
         <Text numberOfLines={2} style={styles.description}>
-          {need.description}
+          {need.dsNecessidade}
         </Text>
       </View>
       <View style={styles.image} />

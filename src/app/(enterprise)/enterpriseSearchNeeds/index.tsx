@@ -2,58 +2,44 @@ import { TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import { Input } from "@/components/input";
 import { Feather } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { theme } from "@/theme";
-import { ManagerNeedProps } from "@/types/types";
+import { Necessidade } from "@/types/types";
 import { ScrollView } from "react-native-gesture-handler";
 import { NeedCard } from "@/components/needCard";
+import NeedRepository from "@/services/repositories/needRepository";
+import { Loading } from "@/components/loading";
 
 export default function EnterpiseConfigs() {
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [needs, setNeeds] = useState<Necessidade[]>([]);
 
-  const [needs, setNeed] = useState<ManagerNeedProps[]>([
-    {
-      id: "1",
-      name: "Need Alpha 1",
-      description: "A need for improving community-level resources.",
-      budget: 200000,
-      creationDate: new Date("2024-09-17"),
-      city: "Brasília",
-      uf: "DF",
-    },
-    {
-      id: "2",
-      name: "Need Alpha 2",
-      description: "A need for improving community-level resources.",
-      budget: 150000,
-      creationDate: new Date("2024-09-17"),
-      city: "Brasília",
-      uf: "DF",
-    },
-    {
-      id: "3",
-      name: "Need Alpha 3",
-      description: "A more detailed description for community resources needs.",
-      budget: 300000,
-      creationDate: new Date("2024-09-17"),
-      city: "Brasília",
-      uf: "DF",
-    },
-    {
-      id: "4",
-      name: "Need Alpha Test large name",
-      description:
-        "A need for improving community-level resources with a larger name example.",
-      budget: 250000,
-      creationDate: new Date("2024-09-17"),
-      city: "Brasília",
-      uf: "DF",
-    },
-  ]);
+  useEffect(() => {
+    async function fetchNeeds() {
+      try {
+        const fetchedNeeds = await NeedRepository.getAll();
+        setNeeds(fetchedNeeds.content);
+      } catch (error) {
+        console.error("Erro ao buscar projetos: ", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchNeeds();
+  }, []);
 
   const filteredNeeds = needs.filter((need) =>
-    need.name.toLowerCase().includes(search.toLowerCase())
+    need.noNecessidade.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (loading)
+    return (
+      <View style={styles.loadingView}>
+        <Loading dark />
+      </View>
+    );
 
   return (
     <View style={styles.container}>
