@@ -1,9 +1,9 @@
 import { Text, View, ViewProps } from "react-native";
 import { styles } from "./styles";
-import { EnterpriseProjectProps } from "@/types/types";
+import { Projeto } from "@/types/types";
 
 interface ProjectCardProps extends ViewProps {
-  project: EnterpriseProjectProps;
+  project: Projeto;
 }
 
 export function ProjectCard({ project, style, ...props }: ProjectCardProps) {
@@ -11,10 +11,10 @@ export function ProjectCard({ project, style, ...props }: ProjectCardProps) {
     <View style={[styles.container, style]} {...props}>
       <View style={styles.infoContent}>
         <Text numberOfLines={2} style={styles.title}>
-          {project.name}
+          {project.noProjeto}
         </Text>
         <Text numberOfLines={2} style={styles.description}>
-          {project.description}
+          {project.dsProjeto}
         </Text>
       </View>
       <View style={styles.image} />

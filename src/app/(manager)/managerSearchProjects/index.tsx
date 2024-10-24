@@ -1,60 +1,41 @@
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/input";
 import { Feather } from "@expo/vector-icons";
 import { theme } from "@/theme";
 import { ProjectCard } from "@/components/projectCard";
+import ProjectRepository from "@/services/repositories/projectRepository";
+import { Projeto } from "@/types/types";
+import { Loading } from "@/components/loading";
 
 export default function ManagerConfigs() {
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState<Projeto[]>([]);
 
-  const [projects, setProjects] = useState([
-    {
-      id: "1",
-      name: "Project Alpha 1",
-      description: "A project aimed at enhancing enterprise-level solutions.",
-      budget: 500000,
-      creationDate: new Date("2024-09-17"),
-      duration: 12,
-      category: "energy",
-    },
-    {
-      id: "2",
-      name: "Project Alpha 2",
-      description: "A project aimed at enhancing enterprise-level solutions.",
-      budget: 500000,
-      creationDate: new Date("2024-09-17"),
-      duration: 12,
-      category: "energy",
-    },
-    {
-      id: "3",
-      name: "Project Alpha 3",
-      description:
-        "A project aimed at enhancing enterprise-level solutions. A project aimed at enhancing enterprise-level solutions. A project aimed at enhancing enterprise-level solutions.",
-      budget: 500000,
-      creationDate: new Date("2024-09-17"),
-      duration: 12,
-      category: "energy",
-    },
-    {
-      id: "4",
-      name: "Project Alpha Test large name",
-      description: "A project aimed at enhancing enterprise-level solutions.",
-      budget: 500000,
-      creationDate: new Date("2024-09-17"),
-      duration: 12,
-      category: "tech",
-    },
-  ]);
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const fetchedProjects = await ProjectRepository.getAll();
+        setProjects(fetchedProjects);
+      } catch (error) {
+        console.error("Erro ao buscar projetos: ", error);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-  const filteredProjects = projects.filter((need) =>
-    need.name.toLowerCase().includes(search.toLowerCase())
+    fetchProjects();
+  }, []);
+
+  const filteredProjects = projects.filter((project) =>
+    project.noProjeto.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <View style={styles.container}>
+      {loading && <Loading />}
       <View style={styles.header}>
         <Input variant="secondary">
           <Feather
