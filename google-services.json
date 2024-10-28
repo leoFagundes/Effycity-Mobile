@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "525826681793",
+    "project_id": "effycity-1144c",
+    "storage_bucket": "effycity-1144c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:525826681793:android:d3b8aa5e318116ce079d40",
+        "android_client_info": {
+          "package_name": "com.effycity.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "525826681793-erl6rvnituot4c0fnk19n6nbb6r7o2jc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.effycity.mobile",
+            "certificate_hash": "e16c8f9e199ae680d7f418be5f029e4d6700af46"
+          }
+        },
+        {
+          "client_id": "525826681793-mtlpr5pq8s3jm2h3r9rvam1qu4gnnmsm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.effycity.mobile",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "525826681793-m5813h6dsvpmqe01jofn88m3qkctkr3e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAB-DWNa2lFracqTqy2h72xrGirKzyUWVg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "525826681793-btp25udvtcgkqavptmh4blnr1ghsi5qa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
