@@ -13,6 +13,7 @@ interface SelectDropDownProps {
   fieldInData: string;
   disabled?: boolean;
   loading?: boolean;
+  value?: {} | null;
 }
 
 export default function SelectDropDown({
@@ -23,6 +24,7 @@ export default function SelectDropDown({
   fieldInData,
   disabled = false,
   loading = false,
+  value,
 }: SelectDropDownProps) {
   return (
     <SelectDropdown
@@ -31,6 +33,7 @@ export default function SelectDropDown({
       data={data}
       onSelect={onSelected}
       renderButton={(selectedItem, isOpened) => {
+        const displayItem = value || selectedItem;
         return (
           <View
             style={[styles.dropdownButtonStyle, disabled && styles.disabled]}
@@ -40,9 +43,9 @@ export default function SelectDropDown({
             ) : (
               <>
                 {icon && icon}
-                {selectedItem ? (
+                {displayItem ? (
                   <Text style={styles.dropdownButtonTxtStyle}>
-                    {selectedItem[fieldInData]}
+                    {displayItem[fieldInData]}
                   </Text>
                 ) : (
                   <Text style={styles.placeholderTxtStyle}>{placeholder}</Text>

@@ -1,20 +1,28 @@
 export interface GoogleUser {
+  displayName: string;
   email: string;
-  familyName: string;
-  givenName: string;
-  id: string;
-  name: string;
-  photo: string;
-}
-
-export interface AuthResponse {
-  data: {
-    idToken: string;
-    scopes: string[];
-    serverAuthCode: string | null;
-    user: GoogleUser;
+  emailVerified: boolean;
+  isAnonymous: boolean;
+  metadata: {
+    creationTime: number;
+    lastSignInTime: number;
   };
-  type: string;
+  multiFactor: {
+    enrolledFactors: Array<unknown>;
+  };
+  phoneNumber: string | null;
+  photoURL: string;
+  providerData: Array<{
+    displayName: string;
+    email: string;
+    phoneNumber: string | null;
+    photoURL: string;
+    providerId: string;
+    uid: string;
+  }>;
+  providerId: string;
+  tenantId: string | null;
+  uid: string;
 }
 
 export interface Estado {
@@ -67,10 +75,10 @@ export interface Necessidade {
   dsNecessidade: string;
   nuCusto: number;
   dtCriacao: Date;
-  usuarioGestor: UsuarioGestor;
-  estado: Estado;
-  municipio: Municipio;
-  areaTematica: AreaTematica;
+  usuarioGestor: Partial<UsuarioGestor>;
+  estado: Partial<Estado>;
+  municipio: Partial<Municipio>;
+  areaTematica: Partial<AreaTematica>;
 }
 
 export interface AreaTematica {

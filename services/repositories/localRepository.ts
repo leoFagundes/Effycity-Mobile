@@ -4,7 +4,6 @@ class LocalRepository {
   static async getMunicipiosById(id: string) {
     try {
       const response = await api.get(`/api/local/municipios/${id}`);
-      // console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Erro ao localizar usuário gestor:", error);

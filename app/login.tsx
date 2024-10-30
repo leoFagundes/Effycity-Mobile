@@ -12,21 +12,23 @@ import { Feather } from "@expo/vector-icons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/button";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { Loading } from "@/components/loading";
-import SelectDropdown from "react-native-select-dropdown";
 import SelectDropDown from "@/components/selectDropDown";
 import LocalRepository from "@/services/repositories/localRepository";
 import { theme } from "@/theme";
 import { StyleSheet } from "react-native";
+import auth from "@react-native-firebase/auth";
 import {
   Estado,
   Municipio,
   UsuarioGestor,
   UsuarioEmpresa,
+  GoogleUser,
 } from "@/Types/types";
 import EnterpriseUserRepository from "@/services/repositories/enterpriseUserRepository";
 import ManagerUserRepository from "@/services/repositories/managerUserRepository";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const styles = StyleSheet.create({
   container: {
@@ -76,6 +78,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 32,
     marginTop: 12,
+    gap: 16,
   },
 });
 
@@ -111,8 +114,6 @@ export default function Login() {
   });
 
   const router = useRouter();
-  const params = useLocalSearchParams();
-  const { email } = params;
 
   useEffect(() => {
     async function fetchCities() {
@@ -127,12 +128,34 @@ export default function Login() {
       }
     }
 
-    fetchCities();
+    async function fetchStoragedGoogleUser() {
+      try {
+        const fetchedUser = await AsyncStorage.getItem("@user");
 
-    if (email) {
-      setManager({ ...manager, email: email as string });
-      setEnterprise({ ...enterprise, dsEmail: email as string });
+        if (!fetchedUser) {
+          router.back();
+          return;
+        }
+
+        const user: GoogleUser = JSON.parse(fetchedUser);
+
+        setManager({
+          ...manager,
+          email: user.email,
+          usuario: user.displayName,
+        });
+        setEnterprise({
+          ...enterprise,
+          dsEmail: user.email,
+          usuario: user.displayName,
+        });
+      } catch (error) {
+        console.error("Erro ao carregar usuário: ", error);
+      }
     }
+
+    fetchCities();
+    fetchStoragedGoogleUser();
   }, []);
 
   useEffect(() => {
@@ -155,6 +178,12 @@ export default function Login() {
     fetchMunicipios();
   }, [manager.estado]);
 
+  async function signOut() {
+    auth().signOut();
+    await AsyncStorage.removeItem("@user");
+    router.replace("/home");
+  }
+
   async function handleSubmit() {
     if (currentCard === "enterprise") {
       if (
@@ -170,7 +199,7 @@ export default function Login() {
       }
       setLoading(true);
       try {
-        await EnterpriseUserRepository.create({
+        const response = await EnterpriseUserRepository.create({
           usuario: enterprise.usuario,
           dsEmail: enterprise.dsEmail,
           empresa: enterprise.empresa,
@@ -178,7 +207,8 @@ export default function Login() {
           telefone: enterprise.telefone,
           areaAtuacao: enterprise.areaAtuacao,
         });
-        // router.push("/enterpriseHome");
+        await AsyncStorage.setItem("@user", JSON.stringify(response));
+        router.push("/(enterprise)");
       } catch (error) {
         console.error("Erro ao criar empresa: ", error);
       } finally {
@@ -201,7 +231,7 @@ export default function Login() {
       }
       setLoading(true);
       try {
-        await ManagerUserRepository.create({
+        const response = await ManagerUserRepository.create({
           usuario: manager.usuario,
           email: manager.email,
           estado: manager.estado,
@@ -210,7 +240,8 @@ export default function Login() {
           orgao: manager.orgao,
           telefone: manager.telefone,
         });
-        // router.push("/managerHome");
+        await AsyncStorage.setItem("@user", JSON.stringify(response));
+        router.push("/(manager)");
       } catch (error) {
         console.error("Erro ao criar gestor: ", error);
       } finally {
@@ -313,7 +344,7 @@ export default function Login() {
                 <Feather name="x" size={16} color={theme.colors.fontColor} />
               </TouchableOpacity>
             </Input>
-            <Input style={email ? { opacity: 0.5, pointerEvents: "none" } : {}}>
+            <Input style={{ opacity: 0.5, pointerEvents: "none" }}>
               <Feather name="mail" size={20} color={theme.colors.fontColor} />
               <Input.Field
                 value={enterprise.dsEmail}
@@ -425,7 +456,7 @@ export default function Login() {
                 <Feather name="x" size={16} color={theme.colors.fontColor} />
               </TouchableOpacity>
             </Input>
-            <Input style={email ? { opacity: 0.5, pointerEvents: "none" } : {}}>
+            <Input style={{ opacity: 0.5, pointerEvents: "none" }}>
               <Feather name="mail" size={20} color={theme.colors.fontColor} />
               <Input.Field
                 value={manager.email}
@@ -465,6 +496,7 @@ export default function Login() {
               loading={loadingEstados}
               data={estados}
               fieldInData="noEstado"
+              value={manager.estado?.noEstado ? manager.estado : null}
               icon={
                 <Feather
                   name="map-pin"
@@ -479,6 +511,7 @@ export default function Login() {
               data={municipiosByCity}
               fieldInData="noMunicipio"
               loading={loadingMunicipios}
+              value={manager.municipio?.noMunicipio ? manager.municipio : null}
               onSelected={(selectedItem) =>
                 setManager({ ...manager, municipio: selectedItem })
               }
@@ -565,6 +598,9 @@ export default function Login() {
       <View style={styles.buttonsContent}>
         <Button variant="secondary" onPress={handleSubmit}>
           {loading ? <Loading /> : "Criar conta"}
+        </Button>
+        <Button variant="primary" onPress={signOut}>
+          Voltar
         </Button>
       </View>
     </View>
