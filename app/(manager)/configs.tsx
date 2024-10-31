@@ -24,7 +24,7 @@ import ManagerUserRepository from "@/services/repositories/managerUserRepository
 export default function Configs() {
   const [user, setUser] = useState<UsuarioGestor>();
   const [loading, setLoading] = useState(true);
-  const [saveLoading, setSaveLoading] = useState(false);
+  const [loadingUserInfo, setLoadingUserInfo] = useState(false);
   const [estados, setEstados] = useState<Estado[]>([]);
   const [municipiosByCity, setMunicipiosByCity] = useState<Municipio[]>([]);
 
@@ -81,6 +81,7 @@ export default function Configs() {
   async function handleSaveSubmit() {
     if (!user) return;
 
+    setLoadingUserInfo(true);
     try {
       await ManagerUserRepository.update(user.id.toString(), user);
       Alert.alert("Sucesso", "Informções pessoais alteradas com sucesso!");
@@ -90,6 +91,8 @@ export default function Configs() {
         "Erro ao salvar informações pessoais, tente novamente mais tarde."
       );
       console.log("Erro ao salvar informações pessoais: ", error);
+    } finally {
+      setLoadingUserInfo(false);
     }
   }
 
@@ -135,7 +138,7 @@ export default function Configs() {
               <Feather name="x" size={16} color={theme.colors.fontColor} />
             </TouchableOpacity>
           </Input>
-          <Input>
+          <Input style={{ opacity: 0.5, pointerEvents: "none" }}>
             <Feather name="mail" size={20} color={theme.colors.fontColor} />
             <Input.Field
               value={user.email}
@@ -143,13 +146,6 @@ export default function Configs() {
               placeholderTextColor={theme.colors.placeHolderColor}
               onChangeText={(e) => setUser({ ...user, email: e })}
             />
-            <TouchableOpacity
-              style={!user.email && styles.isInvisible}
-              onPress={() => setUser({ ...user, email: "" })}
-              activeOpacity={0.7}
-            >
-              <Feather name="x" size={16} color={theme.colors.fontColor} />
-            </TouchableOpacity>
           </Input>
           <Input>
             <Feather name="phone" size={20} color={theme.colors.fontColor} />
@@ -240,12 +236,16 @@ export default function Configs() {
       <View style={styles.buttonContent}>
         <Button
           icon={
-            <Feather name="save" size={20} color={theme.colors.fontColor} />
+            loadingUserInfo ? (
+              false
+            ) : (
+              <Feather name="save" size={20} color={theme.colors.fontColor} />
+            )
           }
           variant="secondary"
           onPress={handleSaveSubmit}
         >
-          Salvar informações
+          {loadingUserInfo ? <Loading dark /> : "Salvar informações"}
         </Button>
         <Button
           icon={

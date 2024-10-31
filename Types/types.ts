@@ -60,13 +60,13 @@ export interface UsuarioEmpresa {
 
 export interface Projeto {
   id: number;
-  usuarioEmpresa: UsuarioEmpresa;
+  usuarioEmpresa: Partial<UsuarioEmpresa>;
   noProjeto: string;
   dsProjeto: string;
   custo: number;
   dtCriacao: Date;
   duracaoMeses: number;
-  areaTematica: AreaTematica;
+  areaTematica: Partial<AreaTematica>;
 }
 
 export interface Necessidade {

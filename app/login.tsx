@@ -29,6 +29,7 @@ import {
 import EnterpriseUserRepository from "@/services/repositories/enterpriseUserRepository";
 import ManagerUserRepository from "@/services/repositories/managerUserRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import areasDeAtuacao from "@/utils/areasDeAtuacao.json";
 
 export const styles = StyleSheet.create({
   container: {
@@ -249,18 +250,6 @@ export default function Login() {
       }
     }
   }
-
-  const areasDeAtuacao = [
-    {
-      title: "teste1",
-    },
-    {
-      title: "teste2",
-    },
-    {
-      title: "teste3",
-    },
-  ];
 
   return (
     <View style={styles.container}>

@@ -34,6 +34,8 @@ export default function Needs() {
   const [user, setUser] = useState<UsuarioGestor>();
   const [userNeeds, setUserNeeds] = useState<Necessidade[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [loadingCreateOrUpdate, setLoadingCreateOrUpdate] = useState(false);
   const [isCreateBottomSheetOpen, setIsCreateBottomSheetOpen] = useState(false);
   const [isEditBottomSheetOpen, setIsEditBottomSheetOpen] = useState(false);
   const [estados, setEstados] = useState<Estado[]>([]);
@@ -64,7 +66,7 @@ export default function Needs() {
     setLoading(true);
     try {
       const fetchedNeeds = await NeedRepository.getAll();
-      const filteredUserNeeds: Necessidade[] = fetchedNeeds.content.filter(
+      const filteredUserNeeds = fetchedNeeds.content.filter(
         (need: Necessidade) => need.usuarioGestor.id === user.id
       );
 
@@ -108,7 +110,7 @@ export default function Needs() {
         const fecthedAreas = await AreaRepository.getAll();
         setAreasTematicas(fecthedAreas);
       } catch (error) {
-        console.error("Erro ao carregar estados: ", error);
+        console.error("Erro ao carregar areas: ", error);
       }
     }
 
@@ -212,6 +214,7 @@ export default function Needs() {
   };
 
   const handleCreateNeed = async () => {
+    setLoadingCreateOrUpdate(true);
     try {
       await NeedRepository.create({
         ...createNeed,
@@ -226,23 +229,44 @@ export default function Needs() {
         `Erro ao criar necessidade. Tente novamente mais tarde.`
       );
       console.error("Erro ao criar necessidade: ", error);
+    } finally {
+      setLoadingCreateOrUpdate(false);
     }
   };
 
   const handleEditNeed = async () => {
     if (!user || !user.id || !editNeed) return;
 
+    setLoadingCreateOrUpdate(true);
     try {
       await NeedRepository.update(editNeed.id.toString(), editNeed);
       handleEditBottomSheetClose();
-      Alert.alert("Sucesso", "Necessidade editada com sucesso!");
       fetchUserNeeds();
+      Alert.alert("Sucesso", "Necessidade editada com sucesso!");
     } catch (error) {
       Alert.alert(
         "Error",
         `Erro ao editar necessidade. Tente novamente mais tarde.`
       );
       console.error("Erro ao criar necessidade: ", error);
+    } finally {
+      setLoadingCreateOrUpdate(false);
+    }
+  };
+
+  const handleDeleteNeed = async () => {
+    if (!editNeed?.id) return;
+
+    setLoadingDelete(true);
+    try {
+      await NeedRepository.delete(editNeed.id.toString());
+      handleEditBottomSheetClose();
+      fetchUserNeeds();
+      Alert.alert("Sucesso", "Necessidade deletada com sucesso!");
+    } catch (error) {
+      console.error("Erro ao deletar necessidade");
+    } finally {
+      setLoadingDelete(false);
     }
   };
 
@@ -309,7 +333,9 @@ export default function Needs() {
           snapPoints={[0.01, 450]}
           backgroundStyle={styles.bottomSheet}
         >
-          <Text style={styles.titleCreateBottomSheet}>Criar Necessidade</Text>
+          <View style={styles.titleContent}>
+            <Text style={styles.titleCreateBottomSheet}>Criar Necessidade</Text>
+          </View>
 
           <ScrollView>
             <View style={styles.createBottomSheetContent}>
@@ -448,7 +474,7 @@ export default function Needs() {
                   }
                 />
                 <SelectDropDown
-                  onSelected={(selectedItem: Estado) =>
+                  onSelected={(selectedItem: AreaTematica) =>
                     setCreateNeed({
                       ...createNeed,
                       areaTematica: selectedItem,
@@ -477,7 +503,7 @@ export default function Needs() {
 
           <View style={styles.buttonsContentCreateBottomSheet}>
             <Button variant="secondary" onPress={handleCreateNeed}>
-              Criar
+              {loadingCreateOrUpdate ? <Loading dark /> : "Criar"}
             </Button>
           </View>
         </BottomSheet>
@@ -490,9 +516,26 @@ export default function Needs() {
         >
           {editNeed && (
             <>
-              <Text style={styles.titleCreateBottomSheet}>
-                Editar {editNeed?.noNecessidade}
-              </Text>
+              <View style={styles.titleContent}>
+                <Text style={styles.titleCreateBottomSheet}>
+                  Editar {editNeed?.noNecessidade}
+                </Text>
+
+                <TouchableOpacity
+                  onPress={handleDeleteNeed}
+                  activeOpacity={0.7}
+                >
+                  {loadingDelete ? (
+                    <Loading />
+                  ) : (
+                    <Feather
+                      name="trash"
+                      size={24}
+                      color={theme.colors.primaryColor}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
               <ScrollView>
                 <View style={styles.createBottomSheetContent}>
                   <View style={styles.formCreateContent}>
@@ -672,7 +715,7 @@ export default function Needs() {
               </ScrollView>
               <View style={styles.buttonsContentCreateBottomSheet}>
                 <Button variant="secondary" onPress={handleEditNeed}>
-                  Editar
+                  {loadingCreateOrUpdate ? <Loading dark /> : "Editar"}
                 </Button>
               </View>
             </>
@@ -724,11 +767,22 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 
+  titleContent: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 16,
+  },
+
   titleCreateBottomSheet: {
+    alignItems: "center",
+    justifyContent: "center",
     fontSize: 26,
     fontFamily: theme.fontFamily.semiBold,
     color: theme.colors.primaryColor,
     textAlign: "center",
+    position: "relative",
+    maxWidth: 250,
   },
 
   formCreateContent: {

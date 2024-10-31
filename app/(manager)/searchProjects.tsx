@@ -8,13 +8,7 @@ import { Projeto, UsuarioGestor } from "@/Types/types";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, View, ScrollView, TouchableOpacity } from "react-native";
 
 export default function SearchProjects() {
   const [user, setUser] = useState<UsuarioGestor>();
@@ -40,6 +34,7 @@ export default function SearchProjects() {
     }
 
     async function fetchProjects() {
+      setLoading(true);
       try {
         const fetchedProjects = await ProjectRepository.getAll();
         setProjects(fetchedProjects);
@@ -54,8 +49,10 @@ export default function SearchProjects() {
     fetchStoragedGoogleUser();
   }, []);
 
-  const filteredProjects = projects.filter((project) =>
-    project.noProjeto.toLowerCase().includes(search.toLowerCase())
+  const filteredProjects = projects.filter(
+    (project) =>
+      project.noProjeto.toLowerCase().includes(search.toLowerCase()) ||
+      project.dsProjeto.toLowerCase().includes(search.toLowerCase())
   );
 
   if (loading)
@@ -132,6 +129,8 @@ const styles = StyleSheet.create({
   },
 
   loadingView: {
+    justifyContent: "center",
+    alignItems: "center",
     flex: 1,
     backgroundColor: theme.colors.backgroundPrimary,
   },

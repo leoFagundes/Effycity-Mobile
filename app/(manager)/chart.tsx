@@ -5,10 +5,14 @@ import { UsuarioGestor } from "@/Types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect } from "react";
 import { StyleSheet, View, Text } from "react-native";
+import indicators from "@/utils/indicators.json";
+import WebView from "react-native-webview";
+import SelectDropDown from "@/components/selectDropDown";
 
 export default function Chart() {
   const [user, setUser] = useState<UsuarioGestor>();
   const [loading, setLoading] = useState(true);
+  const [currentIndicator, setCurrentIndicator] = useState("");
 
   useEffect(() => {
     async function fetchStoragedGoogleUser() {
@@ -39,29 +43,58 @@ export default function Chart() {
   return (
     <View style={styles.container}>
       <Logo variant="small" style={styles.logo} />
-      <View style={styles.header}>
-        <Text style={styles.title}>Dashboards</Text>
+      <View style={styles.formContent}>
+        <SelectDropDown
+          placeholder="Escolha um indicador"
+          data={indicators}
+          value={indicators.filter((item) => item.link === currentIndicator)[0]}
+          fieldInData="title"
+          onSelected={(selectedItem) => setCurrentIndicator(selectedItem.link)}
+        />
       </View>
+
+      {currentIndicator ? (
+        <WebView
+          style={styles.dashboard}
+          originWhitelist={["*"]}
+          source={{
+            html: `<iframe allowtransparency="true" title="dashboards_00" width="100%" height="100%" src="${currentIndicator}" frameborder="0"  allowFullScreen="true"></iframe>`,
+          }}
+        />
+      ) : (
+        <Logo style={{ flex: 1 }} variant="large" />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 40,
-    paddingVertical: 32,
     flex: 1,
     backgroundColor: theme.colors.backgroundPrimary,
+    paddingHorizontal: 16,
+    paddingVertical: 32,
+  },
+
+  formContent: {
+    width: "100%",
+    alignItems: "center",
+    gap: 16,
+  },
+
+  isInvisible: {
+    display: "none",
+  },
+
+  dashboard: {
+    flex: 1,
+    margin: 16,
+    borderRadius: 8,
   },
 
   logo: {
-    marginVertical: 32,
-  },
-
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    marginTop: 32,
+    marginBottom: 22,
   },
 
   title: {

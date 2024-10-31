@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ImageBackground,
   Image,
+  Alert,
 } from "react-native";
 import { useEffect, useState } from "react";
 import {
@@ -89,6 +90,14 @@ const Home = () => {
       // Get the users ID token
       const response = await GoogleSignin.signIn();
 
+      if (!response.data) {
+        Alert.alert(
+          "Ops...",
+          "Não foi possível encontrar suas informações do Google, tenten novamente mais tarde!"
+        );
+        return;
+      }
+
       // Create a Google credential with the token
       const googleCredential = auth.GoogleAuthProvider.credential(
         response.data.idToken
@@ -97,20 +106,25 @@ const Home = () => {
       // Sign-in the user with the credential
       return auth().signInWithCredential(googleCredential);
     } catch (error) {
-      if (isErrorWithCode(error)) {
-        switch (error.code) {
-          case statusCodes.IN_PROGRESS:
-            // operation (eg. sign in) already in progress
-            break;
-          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-            // Android only, play services not available or outdated
-            break;
-          default:
-          // some other error happened
-        }
-      } else {
-        // an error that's not related to google sign in occurred
-      }
+      Alert.alert(
+        "Ops...",
+        "Erro ao logar com o Google, tenten novamente mais tarde!"
+      );
+      console.error("Erro ao logar com o google: ", error);
+      // if (isErrorWithCode(error)) {
+      //   switch (error.code) {
+      //     case statusCodes.IN_PROGRESS:
+      //       // operation (eg. sign in) already in progress
+      //       break;
+      //     case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+      //       // Android only, play services not available or outdated
+      //       break;
+      //     default:
+      //     // some other error happened
+      //   }
+      // } else {
+      //   // an error that's not related to google sign in occurred
+      // }
     } finally {
       setLoading(false);
     }

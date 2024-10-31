@@ -1,11 +1,10 @@
 import { StyleSheet, View } from "react-native";
 import { Logo } from "@/components/logo";
-
 import { useState } from "react";
-
 import { WebView } from "react-native-webview";
 import SelectDropDown from "@/components/selectDropDown";
 import { theme } from "@/theme";
+import indicators from "@/utils/indicators.json";
 
 const styles = StyleSheet.create({
   container: {
@@ -39,28 +38,7 @@ export default function Public() {
       <View style={styles.formContent}>
         <SelectDropDown
           placeholder="Escolha um indicador"
-          data={[
-            {
-              title: "Escolas - Ensino básico",
-              link: "https://app.powerbi.com/view?r=eyJrIjoiMjI4MGZhMTYtYTY4OS00ZTBhLTkwYTctOGU0ZTRkMDMwN2Y0IiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9",
-            },
-            {
-              title: "Museus",
-              link: "https://app.powerbi.com/view?r=eyJrIjoiOTY5NjE0Y2YtNWFiNS00NGZjLTlmYjYtMGJmNzhjNzgxNzU1IiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9",
-            },
-            {
-              title: "Saúde",
-              link: "https://app.powerbi.com/view?r=eyJrIjoiNDljNzU1NzAtZmI5OS00YjlkLWFjMTAtZTMzZWZlZTkwOTBiIiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9",
-            },
-            {
-              title: "Projeção internacional",
-              link: "https://app.powerbi.com/view?r=eyJrIjoiNzgyM2RmOGItMTJjYS00ZGY2LWJmODItNjMyNDBkMjYzMTIwIiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9",
-            },
-            {
-              title: "Trânsito",
-              link: "https://app.powerbi.com/view?r=eyJrIjoiMWY5OWI2NDQtYWQ5YS00ZDJhLWEzOWEtODZmZDI1NTAwMDM3IiwidCI6ImJlMjY4OGM2LWY4NGItNDQyZC1hMDM1LWM2ZTRiODM3NTU0YyJ9&pageName=216a56ebd2f1798aea5a",
-            },
-          ]}
+          data={indicators}
           fieldInData="title"
           onSelected={(selectedItem) => setCurrentIndicator(selectedItem.link)}
         />
