@@ -6,17 +6,12 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from "expo-router";
+export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: "(tabs)",
+  initialRouteName: "index",
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -55,7 +50,7 @@ function RootLayoutNav() {
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="home" options={{ headerShown: false }} />
-      <Stack.Screen name="login" options={{ title: "Login" }} />
+      <Stack.Screen name="login" options={{ title: "Criação de conta" }} />
       <Stack.Screen name="public" options={{ title: "Área Pública" }} />
       <Stack.Screen name="(manager)" options={{ headerShown: false }} />
       <Stack.Screen name="(enterprise)" options={{ headerShown: false }} />

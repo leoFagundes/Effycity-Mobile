@@ -164,7 +164,7 @@ const Home = () => {
         await AsyncStorage.setItem("@user", JSON.stringify(userFiltered[0]));
         router.push("/(enterprise)");
       } else {
-        router.push(`/login`);
+        router.push("/login");
       }
     } catch (error) {
       console.error(error);
@@ -178,11 +178,11 @@ const Home = () => {
     return subscriber; // unsubscribe on unmount
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      userExist();
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     userExist();
+  //   }
+  // }, [user]);
 
   if (initializing) return null;
 
@@ -224,9 +224,6 @@ const Home = () => {
               Como está minha cidade?
             </Button>
           </View>
-          <TouchableOpacity onPress={() => router.push("/(enterprise)")}>
-            <Text>Login</Text>
-          </TouchableOpacity>
         </ImageBackground>
       </SafeAreaView>
     );
@@ -237,7 +234,7 @@ const Home = () => {
       <Logo variant="large" />
       <View>
         <Text style={styles.title}>Bem-vindo(a)</Text>
-        <Text style={styles.subtitle}>{user.email}</Text>
+        <Text style={styles.subtitle}>{user.displayName ?? user.email}</Text>
       </View>
       <Button variant="secondary" onPress={userExist}>
         {loading ? <Loading dark /> : "Entrar"}

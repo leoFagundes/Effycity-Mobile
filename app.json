@@ -21,7 +21,6 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.effycity.mobile",
-
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -36,6 +35,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "46c61ed2-d1cb-4bb5-8912-27f5a8685ab7"
+      }
     }
   }
 }

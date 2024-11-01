@@ -31,58 +31,6 @@ import ManagerUserRepository from "@/services/repositories/managerUserRepository
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import areasDeAtuacao from "@/utils/areasDeAtuacao.json";
 
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.backgroundPrimary,
-  },
-
-  toogleForm: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 20,
-    paddingVertical: 32,
-  },
-
-  toogleCard: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: theme.colors.primaryColor,
-    width: 100,
-    height: 90,
-    borderRadius: 8,
-    gap: 6,
-  },
-
-  toogleText: {
-    color: theme.colors.fontColor,
-    fontFamily: theme.fontFamily.medium,
-  },
-
-  isInvisible: {
-    display: "none",
-  },
-
-  isActive: {
-    borderWidth: 2,
-    borderColor: theme.colors.fontColor,
-  },
-
-  formContent: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    gap: 16,
-  },
-
-  buttonsContent: {
-    alignItems: "center",
-    marginBottom: 32,
-    marginTop: 12,
-    gap: 16,
-  },
-});
-
 export default function Login() {
   const [currentCard, setCurrentCard] = useState<"enterprise" | "manager">(
     "enterprise"
@@ -343,13 +291,6 @@ export default function Login() {
                   setEnterprise({ ...enterprise, dsEmail: e })
                 }
               />
-              <TouchableOpacity
-                style={!enterprise.dsEmail && styles.isInvisible}
-                onPress={() => setEnterprise({ ...enterprise, dsEmail: "" })}
-                activeOpacity={0.7}
-              >
-                <Feather name="x" size={16} color={theme.colors.fontColor} />
-              </TouchableOpacity>
             </Input>
             <Input>
               <Feather name="file" size={20} color={theme.colors.fontColor} />
@@ -453,13 +394,6 @@ export default function Login() {
                 placeholderTextColor={theme.colors.placeHolderColor}
                 onChangeText={(e) => setManager({ ...manager, email: e })}
               />
-              <TouchableOpacity
-                style={!manager.email && styles.isInvisible}
-                onPress={() => setManager({ ...manager, email: "" })}
-                activeOpacity={0.7}
-              >
-                <Feather name="x" size={16} color={theme.colors.fontColor} />
-              </TouchableOpacity>
             </Input>
             <Input>
               <Feather name="phone" size={20} color={theme.colors.fontColor} />
@@ -595,3 +529,55 @@ export default function Login() {
     </View>
   );
 }
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.backgroundPrimary,
+  },
+
+  toogleForm: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 20,
+    paddingVertical: 32,
+  },
+
+  toogleCard: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: theme.colors.primaryColor,
+    width: 100,
+    height: 90,
+    borderRadius: 8,
+    gap: 6,
+  },
+
+  toogleText: {
+    color: theme.colors.fontColor,
+    fontFamily: theme.fontFamily.medium,
+  },
+
+  isInvisible: {
+    display: "none",
+  },
+
+  isActive: {
+    borderWidth: 2,
+    borderColor: theme.colors.fontColor,
+  },
+
+  formContent: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 16,
+  },
+
+  buttonsContent: {
+    alignItems: "center",
+    marginBottom: 32,
+    marginTop: 12,
+    gap: 16,
+  },
+});
