@@ -16,8 +16,8 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   Alert,
+  Dimensions,
 } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { Logo } from "@/components/logo";
@@ -25,10 +25,15 @@ import { NeedCard } from "@/components/needCard";
 import { Input } from "@/components/input";
 import { Button } from "@/components/button";
 import SelectDropDown from "@/components/selectDropDown";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  GestureHandlerRootView,
+  ScrollView,
+} from "react-native-gesture-handler";
 import React from "react";
 import LocalRepository from "@/services/repositories/localRepository";
 import AreaRepository from "@/services/repositories/areaRepository";
+
+const screenHeight = Dimensions.get("window").height;
 
 export default function Needs() {
   const [user, setUser] = useState<UsuarioGestor>();
@@ -38,6 +43,7 @@ export default function Needs() {
   const [loadingCreateOrUpdate, setLoadingCreateOrUpdate] = useState(false);
   const [isCreateBottomSheetOpen, setIsCreateBottomSheetOpen] = useState(false);
   const [isEditBottomSheetOpen, setIsEditBottomSheetOpen] = useState(false);
+  const [isInfoBottomSheetOpen, setIsInfoBottomSheetOpen] = useState(false);
   const [estados, setEstados] = useState<Estado[]>([]);
   const [areasTematicas, setAreasTematicas] = useState<AreaTematica[]>([]);
   const [municipiosByCity, setMunicipiosByCity] = useState<Municipio[]>([]);
@@ -203,6 +209,17 @@ export default function Needs() {
     }
   };
 
+  const infoBottomSheetRef = useRef<BottomSheet>(null);
+
+  const handleInfoBottomSheetOpen = () => infoBottomSheetRef.current?.expand();
+
+  const handleInfoBottomSheetClose = () =>
+    infoBottomSheetRef.current?.snapToIndex(0);
+
+  const handleInfoBottomSheetChange = (index: number) => {
+    setIsInfoBottomSheetOpen(index > 0);
+  };
+
   const handleNeedClicked = (need: Necessidade) => {
     if (isEditBottomSheetOpen && editNeed?.id === need.id) {
       setEditNeed(undefined);
@@ -214,6 +231,18 @@ export default function Needs() {
   };
 
   const handleCreateNeed = async () => {
+    if (
+      !createNeed.noNecessidade ||
+      !createNeed.dsNecessidade ||
+      !createNeed.nuCusto ||
+      !createNeed.areaTematica?.dsAreaTematica ||
+      !createNeed.estado?.noEstado ||
+      !createNeed.municipio?.noMunicipio
+    ) {
+      Alert.alert("Atenção", "Todos os campos precisam ser preenchidos.");
+      return;
+    }
+
     setLoadingCreateOrUpdate(true);
     try {
       await NeedRepository.create({
@@ -236,6 +265,18 @@ export default function Needs() {
 
   const handleEditNeed = async () => {
     if (!user || !user.id || !editNeed) return;
+
+    if (
+      !editNeed.noNecessidade ||
+      !editNeed.dsNecessidade ||
+      !editNeed.nuCusto ||
+      !editNeed.areaTematica?.dsAreaTematica ||
+      !editNeed.estado?.noEstado ||
+      !editNeed.municipio?.noMunicipio
+    ) {
+      Alert.alert("Atenção", "Todos os campos precisam ser preenchidos.");
+      return;
+    }
 
     setLoadingCreateOrUpdate(true);
     try {
@@ -280,7 +321,25 @@ export default function Needs() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <Logo variant="small" style={styles.logo} />
+        <View style={{ position: "relative", justifyContent: "center" }}>
+          <Logo variant="small" style={styles.logo} />
+          <TouchableOpacity
+            onPress={handleInfoBottomSheetOpen}
+            style={{ position: "absolute", right: 0 }}
+            activeOpacity={0.7}
+          >
+            {isInfoBottomSheetOpen ? (
+              <Feather
+                onPress={handleInfoBottomSheetClose}
+                name="x"
+                color={theme.colors.fontColor}
+                size={26}
+              />
+            ) : (
+              <Feather name="info" color={theme.colors.fontColor} size={26} />
+            )}
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.header}>
           <Text style={styles.title}>Minhas Necessidades</Text>
@@ -330,7 +389,7 @@ export default function Needs() {
         <BottomSheet
           onChange={handleCreateBottomSheetChange}
           ref={createBottomSheetRef}
-          snapPoints={[0.01, 450]}
+          snapPoints={[0.01, 550]}
           backgroundStyle={styles.bottomSheet}
         >
           <View style={styles.titleContent}>
@@ -511,7 +570,7 @@ export default function Needs() {
         <BottomSheet
           onChange={handleEditBottomSheetChange}
           ref={editBottomSheetRef}
-          snapPoints={[0.01, 450]}
+          snapPoints={[0.01, 550]}
           backgroundStyle={styles.bottomSheet}
         >
           {editNeed && (
@@ -721,12 +780,113 @@ export default function Needs() {
             </>
           )}
         </BottomSheet>
+
+        <BottomSheet
+          handleComponent={() => (
+            <View style={styles.closeLineContainer}>
+              <View style={styles.closeLine}></View>
+            </View>
+          )}
+          onChange={handleInfoBottomSheetChange}
+          ref={infoBottomSheetRef}
+          snapPoints={[0.01, 550]}
+          backgroundStyle={styles.bottomSheetInfo}
+        >
+          <ScrollView style={styles.infoScrollView}>
+            <View style={styles.infoBottomSheetContent}>
+              <Text style={styles.infoTitle}>
+                <Feather name="info" color={theme.colors.fontColor} size={26} />
+                {"   "}O que são cidades inteligentes?{"\n"}
+              </Text>
+              <Text style={styles.infoSubtitle}>
+                De acordo com a Carta Brasileira para Cidades Inteligentes
+                (Gov.br):{"\n"}
+              </Text>
+              <Text style={styles.infoDescription}>
+                “No Brasil, “cidades inteligentes” são cidades comprometidas com
+                o desenvolvimento urbano e a transformação digital sustentáveis,
+                em seus aspectos econômico, ambiental e sociocultural que atuam
+                de forma planejada, inovadora, inclusiva e em rede, promovem o
+                letramento digital, a governança e a gestão colaborativas e
+                utilizam tecnologias para solucionar problemas concretos, criar
+                oportunidades, oferecer serviços com eficiência, reduzir
+                desigualdades, aumentar a resiliência e melhorar a qualidade de
+                vida de todas as pessoas, garantindo o uso seguro e responsável
+                de dados e das tecnologias da informação e comunicação.”{"\n"}
+              </Text>
+              <Text style={styles.infoTitle}>
+                <Feather name="info" color={theme.colors.fontColor} size={26} />
+                {"   "}O que são as Necessidades?{"\n"}
+              </Text>
+              <Text style={styles.infoDescription}>
+                A função de “Necessidades do Gestor” neste aplicativo é um
+                espaço em que os gestores públicos são capazes de expressar as
+                problemáticas existentes em seu município de atuação,
+                descrevendo demandas relacionadas à transformação da cidade em
+                uma cidade inteligente. {"\n"}
+              </Text>
+              <Text style={styles.infoDescription}>
+                O objetivo dessas Necessidades é informar para as empresas
+                atuantes na área de urbanismo e tecnologia sobre o que os
+                municípios carecem, facilitando assim o encontro de fornecedores
+                e gestores.
+                {"\n"}
+              </Text>
+              <Text style={styles.infoDescription}>
+                Caso haja alguma dúvida para o preenchimento destes campos,
+                entre em contato com nossa equipe! Estamos disponíveis para
+                prestação de consultoria para o seu município!
+                {"\n"}
+              </Text>
+            </View>
+          </ScrollView>
+        </BottomSheet>
       </View>
     </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
+  bottomSheetInfo: {
+    backgroundColor: theme.colors.backgroundPrimary,
+    borderWidth: 2,
+    borderColor: theme.colors.fontColor,
+    flex: 1,
+  },
+  closeLineContainer: {
+    alignSelf: "center",
+  },
+  closeLine: {
+    width: 40,
+    height: 2,
+    borderRadius: 3,
+    backgroundColor: theme.colors.fontColor,
+    marginTop: 9,
+  },
+  infoScrollView: {
+    flex: 1,
+  },
+  infoBottomSheetContent: {
+    padding: 32,
+    flexGrow: 1,
+  },
+  infoTitle: {
+    fontFamily: theme.fontFamily.semiBold,
+    color: theme.colors.fontColor,
+    fontSize: 20,
+    textAlign: "center",
+  },
+  infoSubtitle: {
+    fontFamily: theme.fontFamily.semiBold,
+    color: theme.colors.fontColor,
+    fontSize: 18,
+  },
+  infoDescription: {
+    fontFamily: theme.fontFamily.medium,
+    color: theme.colors.fontColor,
+    fontSize: 16,
+  },
+
   container: {
     paddingHorizontal: 40,
     paddingVertical: 32,
@@ -777,12 +937,12 @@ const styles = StyleSheet.create({
   titleCreateBottomSheet: {
     alignItems: "center",
     justifyContent: "center",
-    fontSize: 26,
+    fontSize: 20,
     fontFamily: theme.fontFamily.semiBold,
     color: theme.colors.primaryColor,
     textAlign: "center",
     position: "relative",
-    maxWidth: 250,
+    maxWidth: "90%",
   },
 
   formCreateContent: {

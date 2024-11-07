@@ -1,6 +1,6 @@
-import { Text, View, ViewProps } from "react-native";
+import { Image, Text, View, ViewProps } from "react-native";
 import { styles } from "./styles";
-import { Necessidade } from "@/types/types";
+import { Necessidade } from "@/Types/types";
 
 interface ManagerCardProps extends ViewProps {
   need: Necessidade;
@@ -17,7 +17,38 @@ export function NeedCard({ need, style, ...props }: ManagerCardProps) {
           {need.dsNecessidade}
         </Text>
       </View>
-      <View style={styles.image} />
+      <View style={styles.imageContent}>
+        {need.areaTematica.dsAreaTematica === "Educação" && (
+          <Image
+            style={styles.image}
+            source={require("@/assets/images/educacao.png")}
+          />
+        )}
+        {need.areaTematica.dsAreaTematica === "Cultura" && (
+          <Image
+            style={styles.image}
+            source={require("@/assets/images/museu.png")}
+          />
+        )}
+        {need.areaTematica.dsAreaTematica === "Transporte Público" && (
+          <Image
+            style={styles.image}
+            source={require("@/assets/images/transporte-publico.png")}
+          />
+        )}
+        {need.areaTematica.dsAreaTematica === "Iluminação Pública" && (
+          <Image
+            style={styles.image}
+            source={require("@/assets/images/iluminacao-publica.png")}
+          />
+        )}
+        {need.areaTematica.dsAreaTematica === "Coleta Seletiva" && (
+          <Image
+            style={styles.image}
+            source={require("@/assets/images/lixeira-de-reciclagem.png")}
+          />
+        )}
+      </View>
     </View>
   );
 }

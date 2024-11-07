@@ -14,17 +14,56 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Linking,
 } from "react-native";
 import areasDeAtuacao from "@/utils/areasDeAtuacao.json";
 import { Button } from "@/components/button";
 import auth from "@react-native-firebase/auth";
 import { router } from "expo-router";
 import EnterpriseUserRepository from "@/services/repositories/enterpriseUserRepository";
+import { useMaskedInput } from "@/hooks/useMaskedInput";
+import React from "react";
 
 export default function Configs() {
   const [user, setUser] = useState<UsuarioEmpresa>();
   const [loading, setLoading] = useState(true);
   const [loadingUserInfo, setLoadingUserInfo] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+
+  let blurTimeout: any;
+
+  const handleFocus = () => {
+    clearTimeout(blurTimeout);
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    blurTimeout = setTimeout(() => {
+      setIsFocused(false);
+    }, 300);
+  };
+
+  const {
+    value: cnpj,
+    onChangeText: handleCNPJChange,
+    clear: clearCNPJ,
+    getRawValue: rawCNPJ,
+  } = useMaskedInput("", "CNPJ");
+
+  const {
+    value: enterprisePhone,
+    onChangeText: handleEnterprisePhoneChange,
+    clear: clearEnterprisePhone,
+    getRawValue: rawEnterprisePhone,
+  } = useMaskedInput("", "phone");
+
+  useEffect(() => {
+    if (user) setUser({ ...user, cnpj: rawCNPJ() });
+  }, [cnpj]);
+
+  useEffect(() => {
+    if (user) setUser({ ...user, telefone: rawEnterprisePhone() });
+  }, [enterprisePhone]);
 
   useEffect(() => {
     async function fetchStoragedGoogleUser() {
@@ -35,6 +74,8 @@ export default function Configs() {
           return;
         }
         const user: UsuarioEmpresa = JSON.parse(fetchedUser);
+        handleCNPJChange(user.cnpj);
+        handleEnterprisePhoneChange(user.telefone);
         setUser(user);
       } catch (error) {
         console.error(error);
@@ -53,6 +94,28 @@ export default function Configs() {
 
   async function handleSaveSubmit() {
     if (!user) return;
+
+    if (
+      !user.usuario ||
+      !user.empresa ||
+      !user.dsEmail ||
+      !user.cnpj ||
+      !user.telefone ||
+      !user.areaAtuacao
+    ) {
+      Alert.alert("Atenção", "Todos os campos precisam ser preenchidos.");
+      return;
+    }
+
+    if (user.telefone.length < 11) {
+      Alert.alert("Atenção", "O telefone está inválido.");
+      return;
+    }
+
+    if (user.cnpj.length < 14) {
+      Alert.alert("Atenção", "O cnpj está inválido.");
+      return;
+    }
 
     setLoadingUserInfo(true);
     try {
@@ -78,7 +141,6 @@ export default function Configs() {
 
   return (
     <View style={styles.container}>
-      <Logo style={styles.logo} />
       <View style={styles.header}>
         <Text style={styles.title}>Alterar informações da conta</Text>
       </View>
@@ -92,6 +154,8 @@ export default function Configs() {
               color={theme.colors.fontColor}
             />
             <Input.Field
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               value={user?.usuario}
               placeholder="Nome de usuário"
               placeholderTextColor={theme.colors.placeHolderColor}
@@ -113,6 +177,8 @@ export default function Configs() {
               color={theme.colors.fontColor}
             />
             <Input.Field
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               value={user.empresa}
               placeholder="Nome da empresa"
               placeholderTextColor={theme.colors.placeHolderColor}
@@ -126,51 +192,9 @@ export default function Configs() {
               <Feather name="x" size={16} color={theme.colors.fontColor} />
             </TouchableOpacity>
           </Input>
-
-          <Input style={{ opacity: 0.5, pointerEvents: "none" }}>
-            <Feather name="mail" size={20} color={theme.colors.fontColor} />
-            <Input.Field
-              value={user.dsEmail}
-              placeholder="Email"
-              placeholderTextColor={theme.colors.placeHolderColor}
-              onChangeText={(e) => setUser({ ...user, dsEmail: e })}
-            />
-          </Input>
-
-          <Input>
-            <Feather name="file" size={20} color={theme.colors.fontColor} />
-            <Input.Field
-              value={user.cnpj}
-              placeholder="CNPJ"
-              placeholderTextColor={theme.colors.placeHolderColor}
-              onChangeText={(e) => setUser({ ...user, cnpj: e })}
-            />
-            <TouchableOpacity
-              style={!user.cnpj && styles.isInvisible}
-              onPress={() => setUser({ ...user, cnpj: "" })}
-              activeOpacity={0.7}
-            >
-              <Feather name="x" size={16} color={theme.colors.fontColor} />
-            </TouchableOpacity>
-          </Input>
-
-          <Input>
-            <Feather name="phone" size={20} color={theme.colors.fontColor} />
-            <Input.Field
-              value={user.telefone}
-              placeholder="Telefone"
-              placeholderTextColor={theme.colors.placeHolderColor}
-              onChangeText={(e) => setUser({ ...user, telefone: e })}
-            />
-            <TouchableOpacity
-              style={!user.telefone && styles.isInvisible}
-              onPress={() => setUser({ ...user, telefone: "" })}
-              activeOpacity={0.7}
-            >
-              <Feather name="x" size={16} color={theme.colors.fontColor} />
-            </TouchableOpacity>
-          </Input>
           <SelectDropDown
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             data={areasDeAtuacao}
             fieldInData="title"
             value={
@@ -189,6 +213,61 @@ export default function Configs() {
               <Feather name="layers" size={20} color={theme.colors.fontColor} />
             }
           />
+          <Input style={{ opacity: 0.5, pointerEvents: "none" }}>
+            <Feather name="mail" size={20} color={theme.colors.fontColor} />
+            <Input.Field
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              value={user.dsEmail}
+              placeholder="Email"
+              placeholderTextColor={theme.colors.placeHolderColor}
+              onChangeText={(e) => setUser({ ...user, dsEmail: e })}
+            />
+          </Input>
+
+          <Input>
+            <Feather name="file" size={20} color={theme.colors.fontColor} />
+            <Input.Field
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              value={cnpj ? cnpj : user.cnpj}
+              placeholder="CNPJ"
+              placeholderTextColor={theme.colors.placeHolderColor}
+              onChangeText={handleCNPJChange}
+            />
+            <TouchableOpacity
+              style={!user.cnpj && styles.isInvisible}
+              onPress={() => {
+                setUser({ ...user, cnpj: "" });
+                clearCNPJ();
+              }}
+              activeOpacity={0.7}
+            >
+              <Feather name="x" size={16} color={theme.colors.fontColor} />
+            </TouchableOpacity>
+          </Input>
+
+          <Input>
+            <Feather name="phone" size={20} color={theme.colors.fontColor} />
+            <Input.Field
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              value={enterprisePhone ? enterprisePhone : user.telefone}
+              placeholder="Telefone"
+              placeholderTextColor={theme.colors.placeHolderColor}
+              onChangeText={handleEnterprisePhoneChange}
+            />
+            <TouchableOpacity
+              style={!user.telefone && styles.isInvisible}
+              onPress={() => {
+                setUser({ ...user, telefone: "" });
+                clearEnterprisePhone();
+              }}
+              activeOpacity={0.7}
+            >
+              <Feather name="x" size={16} color={theme.colors.fontColor} />
+            </TouchableOpacity>
+          </Input>
         </View>
       </ScrollView>
 
@@ -206,18 +285,60 @@ export default function Configs() {
         >
           {loadingUserInfo ? <Loading dark /> : "Salvar informações"}
         </Button>
-        <Button
-          icon={
-            <Feather
-              name="log-out"
-              size={20}
-              color={theme.colors.primaryColor}
-            />
-          }
-          onPress={signOut}
-        >
-          Sair da conta
-        </Button>
+        {!isFocused && (
+          <>
+            <Button
+              icon={
+                <Feather
+                  name="at-sign"
+                  size={20}
+                  color={theme.colors.fontColor}
+                />
+              }
+              variant="secondary"
+              onPress={() => {
+                const email = "suporte@effycity.com";
+                const subject =
+                  "Solicitação de suporte - [Tema da Solicitação]";
+                const body = `
+Olá,
+
+Estou entrando em contato com o suporte do Effycity para discutir uma questão relacionada a [tema da solicitação, ex: exclusão de conta, monetização, etc.].
+
+Detalhes da minha solicitação:
+- Descrição: [descreva aqui sua necessidade ou problema]
+
+Agradeço pela atenção e aguardo um retorno.
+
+Atenciosamente,
+${user.usuario}
+${user.telefone}
+`;
+                const url = `mailto:${email}?subject=${encodeURIComponent(
+                  subject
+                )}&body=${encodeURIComponent(body)}`;
+
+                Linking.openURL(url).catch((err) =>
+                  console.error("Erro ao abrir o email", err)
+                );
+              }}
+            >
+              Contato com o Suporte
+            </Button>
+            <Button
+              icon={
+                <Feather
+                  name="log-out"
+                  size={20}
+                  color={theme.colors.primaryColor}
+                />
+              }
+              onPress={signOut}
+            >
+              Sair da conta
+            </Button>
+          </>
+        )}
       </View>
     </View>
   );
@@ -239,6 +360,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 32,
   },
 
   title: {

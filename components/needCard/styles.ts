@@ -12,6 +12,7 @@ export const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 2,
     borderColor: theme.colors.backgroundPrimary,
+    gap: 22,
   },
 
   infoContent: {
@@ -31,10 +32,17 @@ export const styles = StyleSheet.create({
     color: theme.colors.primaryColor,
   },
 
-  image: {
-    height: 80,
-    width: 80,
+  imageContent: {
+    justifyContent: "center",
+    alignItems: "center",
+    height: 100,
+    width: 100,
     backgroundColor: theme.colors.backgroundSecondary,
     borderRadius: 6,
+  },
+
+  image: {
+    height: 60,
+    width: 60,
   },
 });

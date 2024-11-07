@@ -14,6 +14,8 @@ interface SelectDropDownProps {
   disabled?: boolean;
   loading?: boolean;
   value?: {} | null;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 export default function SelectDropDown({
@@ -25,9 +27,13 @@ export default function SelectDropDown({
   disabled = false,
   loading = false,
   value,
+  onBlur,
+  onFocus,
 }: SelectDropDownProps) {
   return (
     <SelectDropdown
+      onFocus={onFocus ? onFocus : () => ""}
+      onBlur={onBlur ? onBlur : () => ""}
       disabled={!loading && disabled}
       search
       data={data}

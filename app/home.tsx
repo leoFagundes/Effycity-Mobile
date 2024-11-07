@@ -93,7 +93,7 @@ const Home = () => {
       if (!response.data) {
         Alert.alert(
           "Ops...",
-          "Não foi possível encontrar suas informações do Google, tenten novamente mais tarde!"
+          "Não foi possível encontrar suas informações do Google, tente novamente mais tarde!"
         );
         return;
       }
@@ -108,7 +108,7 @@ const Home = () => {
     } catch (error) {
       Alert.alert(
         "Ops...",
-        "Erro ao logar com o Google, tenten novamente mais tarde!"
+        "Erro ao logar com o Google, tente novamente mais tarde!"
       );
       console.error("Erro ao logar com o google: ", error);
       // if (isErrorWithCode(error)) {

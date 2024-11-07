@@ -13,15 +13,11 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
+import { StyleSheet, View, Text, Alert, TouchableOpacity } from "react-native";
 import {
-  StyleSheet,
-  View,
-  Text,
-  Alert,
-  TouchableOpacity,
+  GestureHandlerRootView,
   ScrollView,
-} from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+} from "react-native-gesture-handler";
 
 export default function Projects() {
   const [user, setUser] = useState<UsuarioEmpresa>();
@@ -31,6 +27,7 @@ export default function Projects() {
   const [loadingCreateOrUpdate, setLoadingCreateOrUpdate] = useState(false);
   const [isCreateBottomSheetOpen, setIsCreateBottomSheetOpen] = useState(false);
   const [isEditBottomSheetOpen, setIsEditBottomSheetOpen] = useState(false);
+  const [isInfoBottomSheetOpen, setIsInfoBottomSheetOpen] = useState(false);
   const [editProject, setEditProject] = useState<Projeto | undefined>();
   const [areasTematicas, setAreasTematicas] = useState<AreaTematica[]>([]);
   const [createProject, setCreateProject] = useState<Partial<Projeto>>({
@@ -139,6 +136,17 @@ export default function Projects() {
     }
   };
 
+  const infoBottomSheetRef = useRef<BottomSheet>(null);
+
+  const handleInfoBottomSheetOpen = () => infoBottomSheetRef.current?.expand();
+
+  const handleInfoBottomSheetClose = () =>
+    infoBottomSheetRef.current?.snapToIndex(0);
+
+  const handleInfoBottomSheetChange = (index: number) => {
+    setIsInfoBottomSheetOpen(index > 0);
+  };
+
   const handleProjectClicked = (project: Projeto) => {
     if (isEditBottomSheetOpen && editProject?.id === project.id) {
       setEditProject(undefined);
@@ -150,6 +158,17 @@ export default function Projects() {
   };
 
   const handleCreateProject = async () => {
+    if (
+      !createProject.areaTematica ||
+      !createProject.custo ||
+      !createProject.dsProjeto ||
+      !createProject.noProjeto ||
+      !createProject.areaTematica.dsAreaTematica
+    ) {
+      Alert.alert("Atenção", "Todos os campos precisam ser preenchidos.");
+      return;
+    }
+
     setLoadingCreateOrUpdate(true);
     try {
       await ProjectRepository.create({
@@ -173,8 +192,20 @@ export default function Projects() {
   const handleEditProject = async () => {
     if (!user || !user.id || !editProject) return;
 
+    if (
+      !editProject.areaTematica ||
+      !editProject.custo ||
+      !editProject.dsProjeto ||
+      !editProject.noProjeto ||
+      !editProject.areaTematica.dsAreaTematica
+    ) {
+      Alert.alert("Atenção", "Todos os campos precisam ser preenchidos.");
+      return;
+    }
+
     setLoadingCreateOrUpdate(true);
     try {
+      console.log(editProject);
       await ProjectRepository.update(editProject.id.toString(), editProject);
       handleEditBottomSheetClose();
       fetchUserProjects();
@@ -184,7 +215,7 @@ export default function Projects() {
         "Error",
         `Erro ao editar projeto. Tente novamente mais tarde.`
       );
-      console.error("Erro ao criar projeto: ", error);
+      console.error("Erro ao editar projeto: ", error);
     } finally {
       setLoadingCreateOrUpdate(false);
     }
@@ -216,7 +247,25 @@ export default function Projects() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <Logo variant="small" style={styles.logo} />
+        <View style={{ position: "relative", justifyContent: "center" }}>
+          <Logo variant="small" style={styles.logo} />
+          <TouchableOpacity
+            onPress={handleInfoBottomSheetOpen}
+            style={{ position: "absolute", right: 0 }}
+            activeOpacity={0.7}
+          >
+            {isInfoBottomSheetOpen ? (
+              <Feather
+                onPress={handleInfoBottomSheetClose}
+                name="x"
+                color={theme.colors.fontColor}
+                size={26}
+              />
+            ) : (
+              <Feather name="info" color={theme.colors.fontColor} size={26} />
+            )}
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.header}>
           <Text style={styles.title}>Meus Projetos</Text>
@@ -266,7 +315,7 @@ export default function Projects() {
         <BottomSheet
           onChange={handleCreateBottomSheetChange}
           ref={createBottomSheetRef}
-          snapPoints={[0.01, 450]}
+          snapPoints={[0.01, 550]}
           backgroundStyle={styles.bottomSheet}
         >
           <View style={styles.titleContent}>
@@ -448,7 +497,7 @@ export default function Projects() {
         <BottomSheet
           onChange={handleEditBottomSheetChange}
           ref={editBottomSheetRef}
-          snapPoints={[0.01, 450]}
+          snapPoints={[0.01, 550]}
           backgroundStyle={styles.bottomSheet}
         >
           {editProject && (
@@ -648,12 +697,101 @@ export default function Projects() {
             </>
           )}
         </BottomSheet>
+
+        <BottomSheet
+          handleComponent={() => (
+            <View style={styles.closeLineContainer}>
+              <View style={styles.closeLine}></View>
+            </View>
+          )}
+          onChange={handleInfoBottomSheetChange}
+          ref={infoBottomSheetRef}
+          snapPoints={[0.01, 550]}
+          backgroundStyle={styles.bottomSheetInfo}
+        >
+          <ScrollView style={styles.infoScrollView}>
+            <View style={styles.infoBottomSheetContent}>
+              <Text style={styles.infoTitle}>
+                <Feather name="info" color={theme.colors.fontColor} size={26} />
+                {"   "}O que são cidades inteligentes?{"\n"}
+              </Text>
+              <Text style={styles.infoSubtitle}>
+                De acordo com a Carta Brasileira para Cidades Inteligentes
+                (Gov.br):{"\n"}
+              </Text>
+              <Text style={styles.infoDescription}>
+                “No Brasil, “cidades inteligentes” são cidades comprometidas com
+                o desenvolvimento urbano e a transformação digital sustentáveis,
+                em seus aspectos econômico, ambiental e sociocultural que atuam
+                de forma planejada, inovadora, inclusiva e em rede, promovem o
+                letramento digital, a governança e a gestão colaborativas e
+                utilizam tecnologias para solucionar problemas concretos, criar
+                oportunidades, oferecer serviços com eficiência, reduzir
+                desigualdades, aumentar a resiliência e melhorar a qualidade de
+                vida de todas as pessoas, garantindo o uso seguro e responsável
+                de dados e das tecnologias da informação e comunicação.”{"\n"}
+              </Text>
+              <Text style={styles.infoTitle}>
+                <Feather name="info" color={theme.colors.fontColor} size={26} />
+                {"   "}O que são os Projetos?{"\n"}
+              </Text>
+              <Text style={styles.infoDescription}>
+                Os Projetos de Empresas são propostas elaboradas por empresas
+                que possuem expertise em questões urbanísticas ou tecnológicas e
+                que desejam maior visibilidade e facilitação na comunicação com
+                agentes públicos; com o objetivo de apresentar soluções para
+                auxiliar na transformação das cidades em cidades inteligentes.
+                {"\n"}
+              </Text>
+            </View>
+          </ScrollView>
+        </BottomSheet>
       </View>
     </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
+  bottomSheetInfo: {
+    backgroundColor: theme.colors.backgroundPrimary,
+    borderWidth: 2,
+    borderColor: theme.colors.fontColor,
+    flex: 1,
+  },
+  closeLineContainer: {
+    alignSelf: "center",
+  },
+  closeLine: {
+    width: 40,
+    height: 2,
+    borderRadius: 3,
+    backgroundColor: theme.colors.fontColor,
+    marginTop: 9,
+  },
+  infoScrollView: {
+    flex: 1,
+  },
+  infoBottomSheetContent: {
+    padding: 32,
+    flexGrow: 1,
+  },
+  infoTitle: {
+    fontFamily: theme.fontFamily.semiBold,
+    color: theme.colors.fontColor,
+    fontSize: 20,
+    textAlign: "center",
+  },
+  infoSubtitle: {
+    fontFamily: theme.fontFamily.semiBold,
+    color: theme.colors.fontColor,
+    fontSize: 18,
+  },
+  infoDescription: {
+    fontFamily: theme.fontFamily.medium,
+    color: theme.colors.fontColor,
+    fontSize: 16,
+  },
+
   container: {
     paddingHorizontal: 40,
     paddingVertical: 32,
@@ -704,12 +842,12 @@ const styles = StyleSheet.create({
   titleCreateBottomSheet: {
     alignItems: "center",
     justifyContent: "center",
-    fontSize: 26,
+    fontSize: 20,
     fontFamily: theme.fontFamily.semiBold,
     color: theme.colors.primaryColor,
     textAlign: "center",
     position: "relative",
-    maxWidth: 250,
+    maxWidth: "90%",
   },
 
   formCreateContent: {

@@ -15,12 +15,15 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   Dimensions,
+  Linking,
 } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  GestureHandlerRootView,
+  ScrollView,
+} from "react-native-gesture-handler";
 
-const screenHeight = Dimensions.get("window").height;
+const screenHeight = Dimensions.get("window").height - 80;
 
 export default function SearchNeeds() {
   const [user, setUser] = useState<UsuarioEmpresa>();
@@ -30,6 +33,7 @@ export default function SearchNeeds() {
   const [currentNeed, setCurrentNeed] = useState<Necessidade | undefined>();
   const [isDetailsBottomSheetOpen, setIsDetailsBottomSheetOpen] =
     useState(false);
+  const [isInfoBottomSheetOpen, setIsInfoBottomSheetOpen] = useState(false);
 
   useEffect(() => {
     async function fetchStoragedGoogleUser() {
@@ -82,6 +86,17 @@ export default function SearchNeeds() {
     setIsDetailsBottomSheetOpen(index > 0);
   };
 
+  const infoBottomSheetRef = useRef<BottomSheet>(null);
+
+  const handleInfoBottomSheetOpen = () => infoBottomSheetRef.current?.expand();
+
+  const handleInfoBottomSheetClose = () =>
+    infoBottomSheetRef.current?.snapToIndex(0);
+
+  const handleInfoBottomSheetChange = (index: number) => {
+    setIsInfoBottomSheetOpen(index > 0);
+  };
+
   function handleNeedClicked(need: Necessidade) {
     if (isDetailsBottomSheetOpen && currentNeed?.id === need.id) {
       setCurrentNeed(undefined);
@@ -102,7 +117,25 @@ export default function SearchNeeds() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <Logo style={styles.logo} />
+        <View style={{ position: "relative", justifyContent: "center" }}>
+          <Logo variant="small" style={styles.logo} />
+          <TouchableOpacity
+            onPress={handleInfoBottomSheetOpen}
+            style={{ position: "absolute", right: 0 }}
+            activeOpacity={0.7}
+          >
+            {isInfoBottomSheetOpen ? (
+              <Feather
+                onPress={handleInfoBottomSheetClose}
+                name="x"
+                color={theme.colors.fontColor}
+                size={26}
+              />
+            ) : (
+              <Feather name="info" color={theme.colors.fontColor} size={26} />
+            )}
+          </TouchableOpacity>
+        </View>
         <View style={styles.header}>
           <Input variant="secondary">
             <Feather
@@ -129,12 +162,6 @@ export default function SearchNeeds() {
               />
             </TouchableOpacity>
           </Input>
-          <TouchableOpacity
-            onPress={() => console.log("Filters")}
-            activeOpacity={0.7}
-          >
-            <Feather name="filter" size={28} color={theme.colors.fontColor} />
-          </TouchableOpacity>
         </View>
         <ScrollView>
           <View style={styles.projectsContent}>
@@ -158,7 +185,7 @@ export default function SearchNeeds() {
           )}
           onChange={handleDetailsBottomSheetChange}
           ref={detailsBottomSheetRef}
-          snapPoints={[0.01, screenHeight - 80]}
+          snapPoints={[0.01, screenHeight]}
           backgroundStyle={styles.bottomSheet}
         >
           <ScrollView style={styles.bottomSheetContainer}>
@@ -201,7 +228,33 @@ export default function SearchNeeds() {
             </View>
           </ScrollView>
           <View style={styles.buttonsContentBottomSheet}>
-            <Button variant="secondary" onPress={() => ""}>
+            <Button
+              variant="secondary"
+              onPress={() => {
+                const email = currentNeed?.usuarioGestor.email;
+                const subject = `Interesse em atender à sua necessidade de ${currentNeed?.noNecessidade}`;
+                const body = `
+Olá ${currentNeed?.usuarioGestor.usuario},
+
+Meu nome é ${user?.usuario} e sou da ${user?.empresa}. Estou entrando em contato para expressar nosso interesse em atender à sua necessidade de ${currentNeed?.noNecessidade} que identificamos recentemente.
+
+Acreditamos que nossas soluções podem agregar valor ao seu projeto e ficaremos felizes em discutir como podemos colaborar.
+
+Fico à disposição para agendarmos uma conversa.
+
+Atenciosamente,
+${user?.empresa}
+${user?.telefone}
+`;
+                const url = `mailto:${email}?subject=${encodeURIComponent(
+                  subject
+                )}&body=${encodeURIComponent(body)}`;
+
+                Linking.openURL(url).catch((err) =>
+                  console.error("Erro ao abrir o email", err)
+                );
+              }}
+            >
               Entrar em contato
             </Button>
             <Button onPress={() => handleNeedClicked(currentNeed!)}>
@@ -209,21 +262,98 @@ export default function SearchNeeds() {
             </Button>
           </View>
         </BottomSheet>
+
+        <BottomSheet
+          handleComponent={() => (
+            <View style={styles.closeLineContainer}>
+              <View style={styles.closeLine}></View>
+            </View>
+          )}
+          onChange={handleInfoBottomSheetChange}
+          ref={infoBottomSheetRef}
+          snapPoints={[0.01, 550]}
+          backgroundStyle={styles.bottomSheetInfo}
+        >
+          <ScrollView style={styles.infoScrollView}>
+            <View style={styles.infoBottomSheetContent}>
+              <Text style={styles.infoTitle}>
+                <Feather name="info" color={theme.colors.fontColor} size={26} />
+                {"   "}O que são cidades inteligentes?{"\n"}
+              </Text>
+              <Text style={styles.infoSubtitle}>
+                De acordo com a Carta Brasileira para Cidades Inteligentes
+                (Gov.br):{"\n"}
+              </Text>
+              <Text style={styles.infoDescription}>
+                “No Brasil, “cidades inteligentes” são cidades comprometidas com
+                o desenvolvimento urbano e a transformação digital sustentáveis,
+                em seus aspectos econômico, ambiental e sociocultural que atuam
+                de forma planejada, inovadora, inclusiva e em rede, promovem o
+                letramento digital, a governança e a gestão colaborativas e
+                utilizam tecnologias para solucionar problemas concretos, criar
+                oportunidades, oferecer serviços com eficiência, reduzir
+                desigualdades, aumentar a resiliência e melhorar a qualidade de
+                vida de todas as pessoas, garantindo o uso seguro e responsável
+                de dados e das tecnologias da informação e comunicação.”{"\n"}
+              </Text>
+              <Text style={styles.infoTitle}>
+                <Feather name="info" color={theme.colors.fontColor} size={26} />
+                {"   "}O que são as Necessidades?{"\n"}
+              </Text>
+              <Text style={styles.infoDescription}>
+                A função de “Necessidades do Gestor” neste aplicativo é um
+                espaço em que os gestores públicos são capazes de expressar as
+                problemáticas existentes em seu município de atuação,
+                descrevendo demandas relacionadas à transformação da cidade em
+                uma cidade inteligente. {"\n"}
+              </Text>
+            </View>
+          </ScrollView>
+        </BottomSheet>
       </View>
     </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
+  bottomSheetInfo: {
+    backgroundColor: theme.colors.backgroundPrimary,
+    borderWidth: 2,
+    borderColor: theme.colors.fontColor,
+    flex: 1,
+  },
   closeLineContainer: {
     alignSelf: "center",
   },
   closeLine: {
     width: 40,
-    height: 4,
+    height: 2,
     borderRadius: 3,
     backgroundColor: theme.colors.fontColor,
     marginTop: 9,
+  },
+  infoScrollView: {
+    flex: 1,
+  },
+  infoBottomSheetContent: {
+    padding: 32,
+    flexGrow: 1,
+  },
+  infoTitle: {
+    fontFamily: theme.fontFamily.semiBold,
+    color: theme.colors.fontColor,
+    fontSize: 20,
+    textAlign: "center",
+  },
+  infoSubtitle: {
+    fontFamily: theme.fontFamily.semiBold,
+    color: theme.colors.fontColor,
+    fontSize: 18,
+  },
+  infoDescription: {
+    fontFamily: theme.fontFamily.medium,
+    color: theme.colors.fontColor,
+    fontSize: 16,
   },
 
   bottomSheet: {
@@ -236,14 +366,14 @@ const styles = StyleSheet.create({
 
   bottomSheetContainer: {
     flex: 1,
-    paddingHorizontal: 32,
+    paddingHorizontal: 26,
     paddingVertical: 16,
-    gap: 32,
+    gap: 26,
   },
 
   bottomSheetTitle: {
     color: theme.colors.fontColor,
-    fontSize: 26,
+    fontSize: 22,
     fontFamily: theme.fontFamily.semiBold,
     textAlign: "center",
     marginBottom: 20,
@@ -290,7 +420,8 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    marginVertical: 32,
+    marginTop: 32,
+    marginBottom: 16,
   },
 
   loadingView: {
@@ -300,7 +431,7 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     marginVertical: 16,
   },
