@@ -132,7 +132,7 @@ export default function Configs() {
     setLoadingUserInfo(true);
     try {
       await ManagerUserRepository.update(user.id.toString(), user);
-      Alert.alert("Sucesso", "Informções pessoais alteradas com sucesso!");
+      Alert.alert("Sucesso", "Informações pessoais alteradas com sucesso!");
     } catch (error) {
       Alert.alert(
         "Erro",

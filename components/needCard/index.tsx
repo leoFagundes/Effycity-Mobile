@@ -18,34 +18,53 @@ export function NeedCard({ need, style, ...props }: ManagerCardProps) {
         </Text>
       </View>
       <View style={styles.imageContent}>
-        {need.areaTematica.dsAreaTematica === "Educação" && (
+        {need.areaTematica.dsAreaTematica === "Educação e Inclusão Digital" && (
           <Image
             style={styles.image}
             source={require("@/assets/images/educacao.png")}
           />
         )}
-        {need.areaTematica.dsAreaTematica === "Cultura" && (
+        {need.areaTematica.dsAreaTematica === "Cultura e Inclusão Social" && (
           <Image
             style={styles.image}
             source={require("@/assets/images/museu.png")}
           />
         )}
-        {need.areaTematica.dsAreaTematica === "Transporte Público" && (
+        {need.areaTematica.dsAreaTematica === "Mobilidade Urbana" && (
           <Image
             style={styles.image}
             source={require("@/assets/images/transporte-publico.png")}
           />
         )}
-        {need.areaTematica.dsAreaTematica === "Iluminação Pública" && (
+        {need.areaTematica.dsAreaTematica === "Infraestrutura Urbana" && (
           <Image
             style={styles.image}
             source={require("@/assets/images/iluminacao-publica.png")}
           />
         )}
-        {need.areaTematica.dsAreaTematica === "Coleta Seletiva" && (
+        {need.areaTematica.dsAreaTematica === "Gestão de Resíduos" && (
           <Image
             style={styles.image}
             source={require("@/assets/images/lixeira-de-reciclagem.png")}
+          />
+        )}
+        {need.areaTematica.dsAreaTematica ===
+          "Sustentabilidade e Meio Ambiente" && (
+          <Image
+            style={styles.image}
+            source={require("@/assets/images/sustentabilidade.png")}
+          />
+        )}
+        {need.areaTematica.dsAreaTematica === "Conectividade" && (
+          <Image
+            style={styles.image}
+            source={require("@/assets/images/conectividade.png")}
+          />
+        )}
+        {need.areaTematica.dsAreaTematica === "Saúde" && (
+          <Image
+            style={styles.image}
+            source={require("@/assets/images/saude.png")}
           />
         )}
       </View>

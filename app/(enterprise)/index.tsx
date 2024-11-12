@@ -325,6 +325,31 @@ export default function Projects() {
           <ScrollView>
             <View style={styles.createBottomSheetContent}>
               <View style={styles.formCreateContent}>
+                <SelectDropDown
+                  onSelected={(selectedItem: AreaTematica) =>
+                    setCreateProject({
+                      ...createProject,
+                      areaTematica: selectedItem,
+                    })
+                  }
+                  placeholder="Area Temática"
+                  loading={false}
+                  data={areasTematicas}
+                  fieldInData="dsAreaTematica"
+                  value={
+                    createProject.areaTematica?.dsAreaTematica
+                      ? createProject.areaTematica
+                      : null
+                  }
+                  icon={
+                    <Feather
+                      name="grid"
+                      size={20}
+                      color={theme.colors.fontColor}
+                    />
+                  }
+                />
+
                 <Input>
                   <FontAwesome6
                     name="user"
@@ -458,31 +483,6 @@ export default function Projects() {
                     />
                   </TouchableOpacity>
                 </Input>
-
-                <SelectDropDown
-                  onSelected={(selectedItem: AreaTematica) =>
-                    setCreateProject({
-                      ...createProject,
-                      areaTematica: selectedItem,
-                    })
-                  }
-                  placeholder="Area Temática"
-                  loading={false}
-                  data={areasTematicas}
-                  fieldInData="dsAreaTematica"
-                  value={
-                    createProject.areaTematica?.dsAreaTematica
-                      ? createProject.areaTematica
-                      : null
-                  }
-                  icon={
-                    <Feather
-                      name="grid"
-                      size={20}
-                      color={theme.colors.fontColor}
-                    />
-                  }
-                />
               </View>
             </View>
           </ScrollView>
@@ -525,6 +525,31 @@ export default function Projects() {
               <ScrollView>
                 <View style={styles.createBottomSheetContent}>
                   <View style={styles.formCreateContent}>
+                    <SelectDropDown
+                      onSelected={(selectedItem: AreaTematica) =>
+                        setEditProject({
+                          ...editProject,
+                          areaTematica: selectedItem,
+                        })
+                      }
+                      placeholder="Area Temática"
+                      loading={false}
+                      data={areasTematicas}
+                      fieldInData="dsAreaTematica"
+                      value={
+                        editProject.areaTematica?.dsAreaTematica
+                          ? editProject.areaTematica
+                          : null
+                      }
+                      icon={
+                        <Feather
+                          name="grid"
+                          size={20}
+                          color={theme.colors.fontColor}
+                        />
+                      }
+                    />
+
                     <Input>
                       <FontAwesome6
                         name="user"
@@ -661,31 +686,6 @@ export default function Projects() {
                         />
                       </TouchableOpacity>
                     </Input>
-
-                    <SelectDropDown
-                      onSelected={(selectedItem: AreaTematica) =>
-                        setEditProject({
-                          ...editProject,
-                          areaTematica: selectedItem,
-                        })
-                      }
-                      placeholder="Area Temática"
-                      loading={false}
-                      data={areasTematicas}
-                      fieldInData="dsAreaTematica"
-                      value={
-                        editProject.areaTematica?.dsAreaTematica
-                          ? editProject.areaTematica
-                          : null
-                      }
-                      icon={
-                        <Feather
-                          name="grid"
-                          size={20}
-                          color={theme.colors.fontColor}
-                        />
-                      }
-                    />
                   </View>
                 </View>
               </ScrollView>

@@ -4,7 +4,7 @@ import { Logo } from "@/components/logo";
 import { ProjectCard } from "@/components/projectCard";
 import ProjectRepository from "@/services/repositories/projectRepository";
 import { theme } from "@/theme";
-import { Projeto, UsuarioGestor } from "@/Types/types";
+import { AreaTematica, Projeto, UsuarioGestor } from "@/Types/types";
 import { Feather, FontAwesome6 } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect, useRef } from "react";
@@ -16,25 +16,39 @@ import {
   Dimensions,
   Linking,
 } from "react-native";
-import { router } from "expo-router";
 import BottomSheet from "@gorhom/bottom-sheet";
 import {
   GestureHandlerRootView,
   ScrollView,
 } from "react-native-gesture-handler";
 import { Button } from "@/components/button";
+import SelectDropDown from "@/components/selectDropDown";
+import AreaRepository from "@/services/repositories/areaRepository";
 
 const screenHeight = Dimensions.get("window").height - 80;
 
 export default function SearchProjects() {
   const [user, setUser] = useState<UsuarioGestor>();
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
   const [projects, setProjects] = useState<Projeto[]>([]);
   const [currentProject, setCurrentProject] = useState<Projeto | undefined>();
   const [isDetailsBottomSheetOpen, setIsDetailsBottomSheetOpen] =
     useState(false);
+  const [isFilterBottomSheetOpen, setIsFilterBottomSheetOpen] = useState(false);
   const [isInfoBottomSheetOpen, setIsInfoBottomSheetOpen] = useState(false);
+  const [areasTematicas, setAreasTematicas] = useState<AreaTematica[]>([]);
+
+  const [search, setSearch] = useState("");
+  const [filterCostMin, setFilterCostMin] = useState(0);
+  const [filterCostMax, setFilterCostMax] = useState(999999999999999);
+  const [filterAreaTematica, setFilterAreaTematica] = useState<AreaTematica>();
+
+  const handleClearFilters = () => {
+    setSearch("");
+    setFilterCostMin(0);
+    setFilterCostMax(999999999999999);
+    setFilterAreaTematica(undefined);
+  };
 
   useEffect(() => {
     async function fetchStoragedGoogleUser() {
@@ -65,16 +79,37 @@ export default function SearchProjects() {
       }
     }
 
+    async function fetchAreas() {
+      try {
+        const fecthedAreas = await AreaRepository.getAll();
+        setAreasTematicas(fecthedAreas);
+      } catch (error) {
+        console.error("Erro ao carregar areas: ", error);
+      }
+    }
+
+    fetchAreas();
     fetchProjects();
     fetchStoragedGoogleUser();
   }, []);
 
-  const filteredProjects = projects.filter(
-    (project) =>
+  const filteredProjects = projects.filter((project) => {
+    const matchesSearch =
       project.noProjeto.toLowerCase().includes(search.toLowerCase()) ||
-      project.dsProjeto.toLowerCase().includes(search.toLowerCase())
-  );
+      project.dsProjeto.toLowerCase().includes(search.toLowerCase());
 
+    const matchesCost =
+      project.custo >= filterCostMin && project.custo <= filterCostMax;
+
+    const matchesAreaTematica =
+      !filterAreaTematica ||
+      project.areaTematica.dsAreaTematica?.toLowerCase() ===
+        filterAreaTematica.dsAreaTematica.toLowerCase();
+
+    return matchesSearch && matchesCost && matchesAreaTematica;
+  });
+
+  //###
   const detailsBottomSheetRef = useRef<BottomSheet>(null);
   const handleDetailsBottomSheetOpen = () => {
     detailsBottomSheetRef.current?.expand();
@@ -88,6 +123,7 @@ export default function SearchProjects() {
     setIsDetailsBottomSheetOpen(index > 0);
   };
 
+  //###
   const infoBottomSheetRef = useRef<BottomSheet>(null);
 
   const handleInfoBottomSheetOpen = () => infoBottomSheetRef.current?.expand();
@@ -99,6 +135,20 @@ export default function SearchProjects() {
     setIsInfoBottomSheetOpen(index > 0);
   };
 
+  //###
+  const filterBottomSheetRef = useRef<BottomSheet>(null);
+  const handleFilterBottomSheetOpen = () => {
+    filterBottomSheetRef.current?.expand();
+  };
+  const handleFilterBottomSheetClose = () => {
+    filterBottomSheetRef.current?.snapToIndex(0);
+  };
+
+  const handleFilterBottomSheetChange = (index: number) => {
+    setIsFilterBottomSheetOpen(index > 0);
+  };
+
+  //###
   function handleProjectClicked(project: Projeto) {
     if (isDetailsBottomSheetOpen && currentProject?.id === project.id) {
       setCurrentProject(undefined);
@@ -164,6 +214,21 @@ export default function SearchProjects() {
               />
             </TouchableOpacity>
           </Input>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={handleFilterBottomSheetOpen}
+          >
+            {isFilterBottomSheetOpen ? (
+              <Feather
+                onPress={handleFilterBottomSheetClose}
+                name="x"
+                color={theme.colors.fontColor}
+                size={26}
+              />
+            ) : (
+              <Feather name="filter" size={32} color={theme.colors.fontColor} />
+            )}
+          </TouchableOpacity>
         </View>
         <ScrollView>
           <View style={styles.projectsContent}>
@@ -323,12 +388,151 @@ ${user?.telefone}
             </View>
           </ScrollView>
         </BottomSheet>
+
+        <BottomSheet
+          handleComponent={() => (
+            <View style={styles.closeLineContainer}>
+              <View style={styles.closeLineVariant}></View>
+            </View>
+          )}
+          onChange={handleFilterBottomSheetChange}
+          ref={filterBottomSheetRef}
+          snapPoints={[0.01, 550]}
+          backgroundStyle={styles.bottomSheetFilter}
+        >
+          <ScrollView style={styles.filterScrollView}>
+            <View style={styles.filterBottomSheetContent}>
+              <Text style={styles.filterTitle}>Filtrar Necessidades</Text>
+            </View>
+            <View style={styles.filterContent}>
+              <SelectDropDown
+                onSelected={(selectedItem: AreaTematica) =>
+                  setFilterAreaTematica(selectedItem)
+                }
+                placeholder="Area Temática"
+                loading={false}
+                data={areasTematicas}
+                fieldInData="dsAreaTematica"
+                value={
+                  filterAreaTematica?.dsAreaTematica
+                    ? filterAreaTematica
+                    : {
+                        dsAreaTematica: "Escolha uma Área Temática",
+                      }
+                }
+                icon={
+                  <Feather
+                    name="grid"
+                    size={20}
+                    color={theme.colors.fontColor}
+                  />
+                }
+              />
+
+              <Input>
+                <Feather
+                  name="dollar-sign"
+                  size={20}
+                  color={theme.colors.fontColor}
+                />
+                <Input.Field
+                  keyboardType="numeric"
+                  value={
+                    filterCostMin === 0 ? undefined : filterCostMin.toString()
+                  }
+                  placeholder="Custo Mínimo"
+                  placeholderTextColor={theme.colors.placeHolderColor}
+                  onChangeText={(e) => {
+                    const numericValue = parseFloat(e) || 0;
+                    setFilterCostMin(numericValue);
+                  }}
+                />
+                <TouchableOpacity
+                  style={!filterCostMin && styles.isInvisible}
+                  onPress={() => setFilterCostMin(0)}
+                  activeOpacity={0.7}
+                >
+                  <Feather name="x" size={16} color={theme.colors.fontColor} />
+                </TouchableOpacity>
+              </Input>
+
+              <Input>
+                <Feather
+                  name="dollar-sign"
+                  size={20}
+                  color={theme.colors.fontColor}
+                />
+                <Input.Field
+                  keyboardType="numeric"
+                  value={
+                    filterCostMax === 999999999999999
+                      ? undefined
+                      : filterCostMax.toString()
+                  }
+                  placeholder="Custo Máximo"
+                  placeholderTextColor={theme.colors.placeHolderColor}
+                  onChangeText={(e) => {
+                    const numericValue = parseFloat(e) || 0;
+                    setFilterCostMax(numericValue);
+                  }}
+                />
+                <TouchableOpacity
+                  style={
+                    filterCostMax === 999999999999999 && styles.isInvisible
+                  }
+                  onPress={() => setFilterCostMax(999999999999999)}
+                  activeOpacity={0.7}
+                >
+                  <Feather name="x" size={16} color={theme.colors.fontColor} />
+                </TouchableOpacity>
+              </Input>
+            </View>
+          </ScrollView>
+          <View style={styles.buttonsContentBottomSheet}>
+            <Button variant="secondary" onPress={handleFilterBottomSheetClose}>
+              Aplicar Filtros
+            </Button>
+            <Button
+              variant="secondary"
+              onPress={() => {
+                handleClearFilters();
+                handleFilterBottomSheetClose();
+              }}
+            >
+              Limpar Filtros
+            </Button>
+          </View>
+        </BottomSheet>
       </View>
     </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
+  bottomSheetFilter: {
+    backgroundColor: theme.colors.fontColor,
+    borderWidth: 2,
+    borderColor: theme.colors.primaryColor,
+    flex: 1,
+  },
+  filterScrollView: {
+    flex: 1,
+  },
+  filterContent: {
+    alignItems: "center",
+    gap: 16,
+  },
+  filterBottomSheetContent: {
+    padding: 16,
+    flexGrow: 1,
+  },
+  filterTitle: {
+    fontFamily: theme.fontFamily.semiBold,
+    color: theme.colors.primaryColor,
+    fontSize: 26,
+    textAlign: "center",
+  },
+
   bottomSheetInfo: {
     backgroundColor: theme.colors.backgroundPrimary,
     borderWidth: 2,
@@ -343,6 +547,13 @@ const styles = StyleSheet.create({
     height: 2,
     borderRadius: 3,
     backgroundColor: theme.colors.fontColor,
+    marginTop: 9,
+  },
+  closeLineVariant: {
+    width: 40,
+    height: 2,
+    borderRadius: 3,
+    backgroundColor: theme.colors.primaryColor,
     marginTop: 9,
   },
   infoScrollView: {
@@ -433,8 +644,7 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    marginTop: 32,
-    marginBottom: 16,
+    marginVertical: 32,
   },
 
   loadingView: {
@@ -446,9 +656,9 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 16,
+    marginBottom: 16,
   },
 
   title: {

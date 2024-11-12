@@ -29,7 +29,7 @@ export default function TabLayout() {
                   style={{
                     backgroundColor: theme.colors.activityColor,
                     alignItems: "center",
-                    width: "100%",
+                    width: "130%",
                     height: "100%",
                     padding: 10,
                     gap: 4,
@@ -45,7 +45,7 @@ export default function TabLayout() {
                     style={{
                       color: theme.colors.fontColor,
                       fontFamily: theme.fontFamily.semiBold,
-                      fontSize: 14,
+                      fontSize: 13,
                     }}
                   >
                     Projetos
@@ -72,7 +72,7 @@ export default function TabLayout() {
                   style={{
                     backgroundColor: theme.colors.activityColor,
                     alignItems: "center",
-                    width: "100%",
+                    width: "130%",
                     height: "100%",
                     padding: 10,
                     gap: 4,
@@ -88,7 +88,7 @@ export default function TabLayout() {
                     style={{
                       color: theme.colors.fontColor,
                       fontFamily: theme.fontFamily.semiBold,
-                      fontSize: 14,
+                      fontSize: 13,
                     }}
                   >
                     Gráficos
@@ -119,7 +119,7 @@ export default function TabLayout() {
                   style={{
                     backgroundColor: theme.colors.activityColor,
                     alignItems: "center",
-                    width: "100%",
+                    width: "130%",
                     height: "100%",
                     padding: 10,
                     gap: 4,
@@ -135,7 +135,7 @@ export default function TabLayout() {
                     style={{
                       color: theme.colors.fontColor,
                       fontFamily: theme.fontFamily.semiBold,
-                      fontSize: 14,
+                      fontSize: 13,
                     }}
                   >
                     Necessidades
@@ -166,7 +166,7 @@ export default function TabLayout() {
                   style={{
                     backgroundColor: theme.colors.activityColor,
                     alignItems: "center",
-                    width: "100%",
+                    width: "130%",
                     height: "100%",
                     padding: 10,
                     gap: 4,
@@ -182,7 +182,7 @@ export default function TabLayout() {
                     style={{
                       color: theme.colors.fontColor,
                       fontFamily: theme.fontFamily.semiBold,
-                      fontSize: 14,
+                      fontSize: 13,
                     }}
                   >
                     Configuração

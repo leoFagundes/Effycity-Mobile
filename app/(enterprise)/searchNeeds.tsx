@@ -3,9 +3,18 @@ import { Input } from "@/components/input";
 import { Loading } from "@/components/loading";
 import { Logo } from "@/components/logo";
 import { NeedCard } from "@/components/needCard";
+import SelectDropDown from "@/components/selectDropDown";
+import AreaRepository from "@/services/repositories/areaRepository";
+import LocalRepository from "@/services/repositories/localRepository";
 import NeedRepository from "@/services/repositories/needRepository";
 import { theme } from "@/theme";
-import { Necessidade, UsuarioEmpresa } from "@/Types/types";
+import {
+  AreaTematica,
+  Estado,
+  Municipio,
+  Necessidade,
+  UsuarioEmpresa,
+} from "@/Types/types";
 import { Feather, FontAwesome6 } from "@expo/vector-icons";
 import BottomSheet from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -28,12 +37,32 @@ const screenHeight = Dimensions.get("window").height - 80;
 export default function SearchNeeds() {
   const [user, setUser] = useState<UsuarioEmpresa>();
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [loadingMunicipio, setLoadingMunicipio] = useState(true);
   const [needs, setNeeds] = useState<Necessidade[]>([]);
   const [currentNeed, setCurrentNeed] = useState<Necessidade | undefined>();
   const [isDetailsBottomSheetOpen, setIsDetailsBottomSheetOpen] =
     useState(false);
+  const [isFilterBottomSheetOpen, setIsFilterBottomSheetOpen] = useState(false);
   const [isInfoBottomSheetOpen, setIsInfoBottomSheetOpen] = useState(false);
+  const [estados, setEstados] = useState<Estado[]>([]);
+  const [areasTematicas, setAreasTematicas] = useState<AreaTematica[]>([]);
+  const [municipiosByCity, setMunicipiosByCity] = useState<Municipio[]>([]);
+
+  const [search, setSearch] = useState("");
+  const [filterCostMin, setFilterCostMin] = useState(0);
+  const [filterCostMax, setFilterCostMax] = useState(999999999999999);
+  const [filterState, setFilterState] = useState<Estado>();
+  const [filterMunicipio, setFilterMunicipio] = useState<Municipio>();
+  const [filterAreaTematica, setFilterAreaTematica] = useState<AreaTematica>();
+
+  const handleClearFilters = () => {
+    setSearch("");
+    setFilterCostMin(0);
+    setFilterCostMax(999999999999999);
+    setFilterState(undefined);
+    setFilterMunicipio(undefined);
+    setFilterAreaTematica(undefined);
+  };
 
   useEffect(() => {
     async function fetchStoragedGoogleUser() {
@@ -63,16 +92,80 @@ export default function SearchNeeds() {
       }
     }
 
+    async function fetchCities() {
+      try {
+        const fecthedCities = await LocalRepository.getAllEstados();
+        setEstados(fecthedCities);
+      } catch (error) {
+        console.error("Erro ao carregar estados: ", error);
+      }
+    }
+
+    async function fetchAreas() {
+      try {
+        const fecthedAreas = await AreaRepository.getAll();
+        setAreasTematicas(fecthedAreas);
+      } catch (error) {
+        console.error("Erro ao carregar areas: ", error);
+      }
+    }
+
+    fetchAreas();
+    fetchCities();
     fetchNeeds();
     fetchStoragedGoogleUser();
   }, []);
 
-  const filteredNeeds = needs.filter(
-    (need) =>
-      need.noNecessidade.toLowerCase().includes(search.toLowerCase()) ||
-      need.dsNecessidade.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => {
+    setMunicipiosByCity([]);
+    async function fetchMunicipios() {
+      setLoadingMunicipio(true);
+      try {
+        if (!filterState?.id) return;
+        const fecthedMunicipios = await LocalRepository.getAllMunicipiosList(
+          filterState?.id
+        );
+        setMunicipiosByCity(fecthedMunicipios);
+      } catch (error) {
+        console.error("Erro ao carregar municípios: ", error);
+      } finally {
+        setLoadingMunicipio(false);
+      }
+    }
 
+    fetchMunicipios();
+  }, [filterState]);
+
+  const filteredNeeds = needs.filter((need) => {
+    const matchesSearch =
+      need.noNecessidade.toLowerCase().includes(search.toLowerCase()) ||
+      need.dsNecessidade.toLowerCase().includes(search.toLowerCase());
+
+    const matchesCost =
+      need.nuCusto >= filterCostMin && need.nuCusto <= filterCostMax;
+    const matchesState =
+      !filterState ||
+      need.estado.noEstado?.toLowerCase() ===
+        filterState.noEstado.toLowerCase();
+    const matchesMunicipio =
+      !filterMunicipio ||
+      need.municipio.noMunicipio?.toLowerCase() ===
+        filterMunicipio.noMunicipio.toLowerCase();
+    const matchesAreaTematica =
+      !filterAreaTematica ||
+      need.areaTematica.dsAreaTematica?.toLowerCase() ===
+        filterAreaTematica.dsAreaTematica.toLowerCase();
+
+    return (
+      matchesSearch &&
+      matchesCost &&
+      matchesState &&
+      matchesMunicipio &&
+      matchesAreaTematica
+    );
+  });
+
+  //###
   const detailsBottomSheetRef = useRef<BottomSheet>(null);
   const handleDetailsBottomSheetOpen = () => {
     detailsBottomSheetRef.current?.expand();
@@ -86,6 +179,7 @@ export default function SearchNeeds() {
     setIsDetailsBottomSheetOpen(index > 0);
   };
 
+  //###
   const infoBottomSheetRef = useRef<BottomSheet>(null);
 
   const handleInfoBottomSheetOpen = () => infoBottomSheetRef.current?.expand();
@@ -97,6 +191,20 @@ export default function SearchNeeds() {
     setIsInfoBottomSheetOpen(index > 0);
   };
 
+  //###
+  const filterBottomSheetRef = useRef<BottomSheet>(null);
+  const handleFilterBottomSheetOpen = () => {
+    filterBottomSheetRef.current?.expand();
+  };
+  const handleFilterBottomSheetClose = () => {
+    filterBottomSheetRef.current?.snapToIndex(0);
+  };
+
+  const handleFilterBottomSheetChange = (index: number) => {
+    setIsFilterBottomSheetOpen(index > 0);
+  };
+
+  //###
   function handleNeedClicked(need: Necessidade) {
     if (isDetailsBottomSheetOpen && currentNeed?.id === need.id) {
       setCurrentNeed(undefined);
@@ -162,6 +270,21 @@ export default function SearchNeeds() {
               />
             </TouchableOpacity>
           </Input>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={handleFilterBottomSheetOpen}
+          >
+            {isFilterBottomSheetOpen ? (
+              <Feather
+                onPress={handleFilterBottomSheetClose}
+                name="x"
+                color={theme.colors.fontColor}
+                size={26}
+              />
+            ) : (
+              <Feather name="filter" size={32} color={theme.colors.fontColor} />
+            )}
+          </TouchableOpacity>
         </View>
         <ScrollView>
           <View style={styles.projectsContent}>
@@ -310,12 +433,205 @@ ${user?.telefone}
             </View>
           </ScrollView>
         </BottomSheet>
+
+        <BottomSheet
+          handleComponent={() => (
+            <View style={styles.closeLineContainer}>
+              <View style={styles.closeLineVariant}></View>
+            </View>
+          )}
+          onChange={handleFilterBottomSheetChange}
+          ref={filterBottomSheetRef}
+          snapPoints={[0.01, 550]}
+          backgroundStyle={styles.bottomSheetFilter}
+        >
+          <ScrollView style={styles.filterScrollView}>
+            <View style={styles.filterBottomSheetContent}>
+              <Text style={styles.filterTitle}>Filtrar Necessidades</Text>
+            </View>
+            <View style={styles.filterContent}>
+              <SelectDropDown
+                onSelected={(selectedItem: Estado) =>
+                  setFilterState(selectedItem)
+                }
+                placeholder="Estado"
+                loading={false}
+                data={estados}
+                fieldInData="noEstado"
+                value={
+                  filterState
+                    ? estados.filter(
+                        (estado) => estado.noEstado === filterState.noEstado
+                      )[0]
+                    : {
+                        noEstado: "Escolha um Estado",
+                      }
+                }
+                icon={
+                  <Feather
+                    name="map-pin"
+                    size={20}
+                    color={theme.colors.fontColor}
+                  />
+                }
+              />
+
+              <SelectDropDown
+                placeholder="Escolha um Município"
+                disabled={filterState?.noEstado ? false : true}
+                data={municipiosByCity}
+                fieldInData="noMunicipio"
+                loading={loadingMunicipio}
+                value={
+                  filterMunicipio
+                    ? municipiosByCity.filter(
+                        (municipio) =>
+                          municipio.noMunicipio === filterMunicipio.noMunicipio
+                      )[0]
+                    : {
+                        noMunicipio: "Escolha um Município",
+                      }
+                }
+                onSelected={(selectedItem: Municipio) =>
+                  setFilterMunicipio(selectedItem)
+                }
+                icon={
+                  <Feather
+                    name="map"
+                    size={20}
+                    color={theme.colors.fontColor}
+                  />
+                }
+              />
+
+              <SelectDropDown
+                onSelected={(selectedItem: AreaTematica) =>
+                  setFilterAreaTematica(selectedItem)
+                }
+                placeholder="Area Temática"
+                loading={false}
+                data={areasTematicas}
+                fieldInData="dsAreaTematica"
+                value={
+                  filterAreaTematica?.dsAreaTematica
+                    ? filterAreaTematica
+                    : {
+                        dsAreaTematica: "Escolha uma Área Temática",
+                      }
+                }
+                icon={
+                  <Feather
+                    name="grid"
+                    size={20}
+                    color={theme.colors.fontColor}
+                  />
+                }
+              />
+
+              <Input>
+                <Feather
+                  name="dollar-sign"
+                  size={20}
+                  color={theme.colors.fontColor}
+                />
+                <Input.Field
+                  keyboardType="numeric"
+                  value={
+                    filterCostMin === 0 ? undefined : filterCostMin.toString()
+                  }
+                  placeholder="Custo Mínimo"
+                  placeholderTextColor={theme.colors.placeHolderColor}
+                  onChangeText={(e) => {
+                    const numericValue = parseFloat(e) || 0;
+                    setFilterCostMin(numericValue);
+                  }}
+                />
+                <TouchableOpacity
+                  style={!filterCostMin && styles.isInvisible}
+                  onPress={() => setFilterCostMin(0)}
+                  activeOpacity={0.7}
+                >
+                  <Feather name="x" size={16} color={theme.colors.fontColor} />
+                </TouchableOpacity>
+              </Input>
+
+              <Input>
+                <Feather
+                  name="dollar-sign"
+                  size={20}
+                  color={theme.colors.fontColor}
+                />
+                <Input.Field
+                  keyboardType="numeric"
+                  value={
+                    filterCostMax === 999999999999999
+                      ? undefined
+                      : filterCostMax.toString()
+                  }
+                  placeholder="Custo Máximo"
+                  placeholderTextColor={theme.colors.placeHolderColor}
+                  onChangeText={(e) => {
+                    const numericValue = parseFloat(e) || 0;
+                    setFilterCostMax(numericValue);
+                  }}
+                />
+                <TouchableOpacity
+                  style={
+                    filterCostMax === 999999999999999 && styles.isInvisible
+                  }
+                  onPress={() => setFilterCostMax(999999999999999)}
+                  activeOpacity={0.7}
+                >
+                  <Feather name="x" size={16} color={theme.colors.fontColor} />
+                </TouchableOpacity>
+              </Input>
+            </View>
+          </ScrollView>
+          <View style={styles.buttonsContentBottomSheet}>
+            <Button variant="secondary" onPress={handleFilterBottomSheetClose}>
+              Aplicar Filtros
+            </Button>
+            <Button
+              variant="secondary"
+              onPress={() => {
+                handleClearFilters();
+                handleFilterBottomSheetClose();
+              }}
+            >
+              Limpar Filtros
+            </Button>
+          </View>
+        </BottomSheet>
       </View>
     </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
+  bottomSheetFilter: {
+    backgroundColor: theme.colors.fontColor,
+    borderWidth: 2,
+    borderColor: theme.colors.primaryColor,
+    flex: 1,
+  },
+  filterScrollView: {
+    flex: 1,
+  },
+  filterContent: {
+    alignItems: "center",
+    gap: 16,
+  },
+  filterBottomSheetContent: {
+    padding: 16,
+    flexGrow: 1,
+  },
+  filterTitle: {
+    fontFamily: theme.fontFamily.semiBold,
+    color: theme.colors.primaryColor,
+    fontSize: 26,
+    textAlign: "center",
+  },
+
   bottomSheetInfo: {
     backgroundColor: theme.colors.backgroundPrimary,
     borderWidth: 2,
@@ -330,6 +646,13 @@ const styles = StyleSheet.create({
     height: 2,
     borderRadius: 3,
     backgroundColor: theme.colors.fontColor,
+    marginTop: 9,
+  },
+  closeLineVariant: {
+    width: 40,
+    height: 2,
+    borderRadius: 3,
+    backgroundColor: theme.colors.primaryColor,
     marginTop: 9,
   },
   infoScrollView: {
@@ -420,8 +743,7 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    marginTop: 32,
-    marginBottom: 16,
+    marginVertical: 32,
   },
 
   loadingView: {
@@ -431,9 +753,9 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 16,
+    marginBottom: 16,
   },
 
   title: {

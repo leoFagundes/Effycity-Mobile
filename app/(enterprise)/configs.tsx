@@ -120,7 +120,7 @@ export default function Configs() {
     setLoadingUserInfo(true);
     try {
       await EnterpriseUserRepository.update(user.id.toString(), user);
-      Alert.alert("Sucesso", "Informções empresariais alteradas com sucesso!");
+      Alert.alert("Sucesso", "Informações empresariais alteradas com sucesso!");
     } catch (error) {
       Alert.alert(
         "Erro",

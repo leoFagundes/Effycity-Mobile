@@ -32,6 +32,7 @@ export default function SelectDropDown({
 }: SelectDropDownProps) {
   return (
     <SelectDropdown
+      statusBarTranslucent
       onFocus={onFocus ? onFocus : () => ""}
       onBlur={onBlur ? onBlur : () => ""}
       disabled={!loading && disabled}
