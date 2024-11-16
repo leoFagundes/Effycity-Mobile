@@ -4,7 +4,7 @@ import { api } from "../api";
 class NeedRepository {
   static async getAll() {
     try {
-      const response = await api.get("/api/necessidade-gestor");
+      const response = await api.get("/api/necessidade-gestor?size=999");
       return response.data;
     } catch (error) {
       console.error(

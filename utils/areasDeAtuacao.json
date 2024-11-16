@@ -1,22 +1,17 @@
 [
   {
-    "title": "Construção Civil",
-    "icon": "@/assets/images/educacao.png"
+    "title": "Construção Civil"
   },
   {
-    "title": "Projeto Urbanístico",
-    "icon": "@/assets/images/educacao.png"
+    "title": "Projeto Urbanístico"
   },
   {
-    "title": "Tecnologia",
-    "icon": "@/assets/images/educacao.png"
+    "title": "Tecnologia"
   },
   {
-    "title": "Educação",
-    "icon": "@/assets/images/educacao.png"
+    "title": "Educação"
   },
   {
-    "title": "Cultura",
-    "icon": "@/assets/images/educacao.png"
+    "title": "Cultura"
   }
 ]

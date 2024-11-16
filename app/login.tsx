@@ -10,7 +10,6 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/input";
 import { Feather } from "@expo/vector-icons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { Logo } from "@/components/logo";
 import { Button } from "@/components/button";
 import { useRouter } from "expo-router";
 import { Loading } from "@/components/loading";
