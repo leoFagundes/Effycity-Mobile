@@ -323,7 +323,7 @@ export default function Configs() {
               }
               variant="secondary"
               onPress={() => {
-                const email = "suporte@effycity.com";
+                const email = "effycity.urb@gmail.com";
                 const subject =
                   "Solicitação de suporte - [Tema da Solicitação]";
                 const body = `
